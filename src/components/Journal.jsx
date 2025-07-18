@@ -68,8 +68,8 @@ function Journal() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Daily Journal - Track Your Health</h2> 12]
-      <p className="mb-6 text-gray-600">Record your daily health status to identify patterns and provide data for doctor visits.</p> 21]
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">Daily Journal - Track Your Health</h2>
+      <p className="mb-6 text-gray-600">Record your daily health status to identify patterns and provide data for doctor visits.</p> 
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
         {/* Pain Level */}
