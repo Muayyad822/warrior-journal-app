@@ -9,6 +9,7 @@ import EmergencyKit from './components/EmergencyKit';
 import Analyticss from './components/Analytics';
 import Motivation from './components/Motivation';
 import MedicalReports from './components/MedicalReports';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { HealthDataProvider } from './context/HealthDataContext';
 import Footer from './components/Footer';
 
@@ -44,6 +45,7 @@ function App() {
           </main>
           <FloatingActionButton />
           <Footer />
+          <PWAInstallPrompt />
         </div>
       </HealthDataProvider>
   );
