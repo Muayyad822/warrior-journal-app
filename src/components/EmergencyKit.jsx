@@ -2,56 +2,48 @@ import { useState, useEffect } from 'react';
 import { useHealthData } from '../context/HealthDataContext';
 
 function EmergencyKit() {
-  const { addCrisisLog, crisisActionPlan, updateCrisisActionPlan } = useHealthData();
+  const { addCrisisLog, crisisActionPlan, updateCrisisActionPlan, emergencyContacts, addEmergencyContact, updateEmergencyContact } = useHealthData();
   
-  const [emergencyContacts, setEmergencyContacts] = useState([
-    { name: 'Contact 1', phone: '', type: 'doctor' },
-    { name: 'Contact 2', phone: '', type: 'family' },
-    { name: 'Contact 3', phone: '', type: 'hospital' }
+  const [localContacts, setLocalContacts] = useState([
+    { name: 'Primary Doctor', phone: '', type: 'doctor' },
+    { name: 'Emergency Contact', phone: '', type: 'family' },
+    { name: 'Hospital', phone: '', type: 'hospital' }
   ]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [phoneInput, setPhoneInput] = useState('');
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
-  // Load contacts from localStorage on mount
+  // Initialize with context data or default contacts
   useEffect(() => {
-    const savedContacts = localStorage.getItem('emergencyContacts');
-    if (savedContacts) {
-      setEmergencyContacts(JSON.parse(savedContacts));
+    if (emergencyContacts && emergencyContacts.length > 0) {
+      setLocalContacts(emergencyContacts);
+    } else {
+      // Initialize default contacts in context if none exist
+      const defaultContacts = [
+        { id: 1, name: 'Primary Doctor', phone: '', type: 'doctor' },
+        { id: 2, name: 'Emergency Contact', phone: '', type: 'family' },
+        { id: 3, name: 'Hospital', phone: '', type: 'hospital' }
+      ];
+      defaultContacts.forEach(contact => addEmergencyContact(contact));
     }
-  }, []);
-
-  // Save contacts to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
-  }, [emergencyContacts]);
-
-  const callEmergency = (contact) => {
-    if (contact.phone) {
-      window.location.href = `tel:${contact.phone}`;
-    }
-  };
-
-  const startEditing = (index) => {
-    setEditingIndex(index);
-    setPhoneInput(emergencyContacts[index].phone);
-  };
+  }, [emergencyContacts, addEmergencyContact]);
 
   const savePhone = (index) => {
-    const updatedContacts = [...emergencyContacts];
+    const updatedContacts = [...localContacts];
     updatedContacts[index].phone = phoneInput;
-    setEmergencyContacts(updatedContacts);
-    setEditingIndex(null);
-    setPhoneInput('');
-  };
-
-  const cancelEditing = () => {
+    setLocalContacts(updatedContacts);
+    
+    // Update in context
+    if (updatedContacts[index].id) {
+      updateEmergencyContact(updatedContacts[index].id, { phone: phoneInput });
+    }
+    
     setEditingIndex(null);
     setPhoneInput('');
   };
 
   const sendLocationToContacts = () => {
-    if (emergencyContacts.every(contact => !contact.phone)) {
+    if (localContacts.every(contact => !contact.phone)) {
       alert("Please add at least one emergency contact phone number first.");
       return;
     }
@@ -68,13 +60,11 @@ Time: ${timestamp}
 My location: https://maps.google.com/?q=${latitude},${longitude}
 This is an automated emergency alert from my health app.`;
           
-          // Try native sharing first
           if (navigator.share) {
             navigator.share({
               title: '🚨 Crisis Alert',
               text: message
             }).then(() => {
-              // Log this crisis automatically
               addCrisisLog({
                 id: Date.now(),
                 date: new Date().toISOString().split('T')[0],
@@ -88,11 +78,9 @@ This is an automated emergency alert from my health app.`;
               });
               alert('Crisis alert shared successfully!');
             }).catch(() => {
-              // Fallback to WhatsApp/SMS
               fallbackSharing(message);
             });
           } else {
-            // Fallback for browsers without native sharing
             fallbackSharing(message);
           }
           setIsGettingLocation(false);
@@ -101,7 +89,6 @@ This is an automated emergency alert from my health app.`;
           console.error('Location error:', error);
           setIsGettingLocation(false);
           
-          // Fallback without location
           const fallbackMessage = `🚨 CRISIS ALERT: I'm having a health crisis and need immediate help!
 Time: ${new Date().toLocaleString()}
 Location: Unable to determine location
@@ -111,11 +98,6 @@ This is an automated emergency alert from my health app.`;
           if (proceed) {
             fallbackSharing(fallbackMessage);
           }
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 60000
         }
       );
     } else {
@@ -125,29 +107,24 @@ This is an automated emergency alert from my health app.`;
   };
 
   const fallbackSharing = (message) => {
-    const contactsWithPhones = emergencyContacts.filter(contact => contact.phone);
+    const contactsWithPhones = localContacts.filter(contact => contact.phone);
     
     if (contactsWithPhones.length > 0) {
-      const platformChoice = confirm(
-        "Choose sharing method:\n\nOK = WhatsApp\nCancel = SMS"
-      );
+      const platformChoice = confirm("Choose sharing method:\n\nOK = WhatsApp\nCancel = SMS");
 
       contactsWithPhones.forEach(contact => {
         if (platformChoice) {
-          // WhatsApp
           const cleanPhone = contact.phone.replace(/\D/g, '');
           const encodedMessage = encodeURIComponent(message);
           const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
           window.open(whatsappUrl, '_blank');
         } else {
-          // SMS
           const encodedMessage = encodeURIComponent(message);
           const smsUrl = `sms:${contact.phone}?body=${encodedMessage}`;
           window.open(smsUrl, '_blank');
         }
       });
 
-      // Log this crisis
       addCrisisLog({
         id: Date.now(),
         date: new Date().toISOString().split('T')[0],
@@ -191,7 +168,7 @@ This is an automated emergency alert from my health app.`;
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Emergency Contacts</h3>
         
         <div className="space-y-3">
-          {emergencyContacts.map((contact, index) => (
+          {localContacts.map((contact, index) => (
             <div key={index}>
               {editingIndex === index ? (
                 <div className="bg-gray-50 border border-gray-300 p-4 rounded-lg">
@@ -213,7 +190,10 @@ This is an automated emergency alert from my health app.`;
                         Save
                       </button>
                       <button
-                        onClick={cancelEditing}
+                        onClick={() => {
+                          setEditingIndex(null);
+                          setPhoneInput('');
+                        }}
                         className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm font-medium"
                       >
                         Cancel
@@ -223,7 +203,7 @@ This is an automated emergency alert from my health app.`;
                 </div>
               ) : (
                 <button
-                  onClick={() => contact.phone ? callEmergency(contact) : startEditing(index)}
+                  onClick={() => contact.phone ? window.location.href = `tel:${contact.phone}` : (setEditingIndex(index), setPhoneInput(contact.phone))}
                   className="w-full bg-white border border-gray-300 p-4 rounded-lg flex justify-between items-center hover:bg-gray-50 transition-colors"
                 >
                   <span className="font-medium text-gray-800">{contact.name}</span>
