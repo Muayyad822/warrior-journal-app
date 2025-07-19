@@ -1,7 +1,7 @@
 {
-  "name": "The Warrior's Journal",
+  "name": "The Warrior's Journal - Sickle Cell Disease Management App",
   "short_name": "Warrior's Journal",
-  "description": "Your Digital Health Companion for managing health data and crisis situations",
+  "description": "Comprehensive sickle cell disease management tool for tracking pain crises, symptoms, medications, and health patterns. Your digital health companion for better disease management.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e40af",
@@ -21,7 +21,9 @@
       "purpose": "maskable any"
     }
   ],
-  "categories": ["health", "medical", "lifestyle"],
+  "categories": ["health", "medical", "lifestyle", "productivity"],
   "lang": "en",
-  "dir": "ltr"
+  "dir": "ltr",
+  "scope": "/",
+  "keywords": "sickle cell disease, health tracking, pain management, crisis log, medical diary, health journal, sickle cell tracker"
 }
