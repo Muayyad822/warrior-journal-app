@@ -14,6 +14,8 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { HealthDataProvider } from './context/HealthDataContext';
 import Footer from './components/Footer';
 
+import { Analytics } from "@vercel/analytics/react"
+
 
 const Home = () => (
   <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)]">
@@ -46,6 +48,7 @@ function App() {
         <FloatingActionButton />
         <Footer />
         <PWAInstallPrompt />
+        <Analytics />
         <Toaster 
           position="top-center"
           toastOptions={{
