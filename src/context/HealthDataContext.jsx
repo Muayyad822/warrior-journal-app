@@ -15,14 +15,27 @@ export const HealthDataProvider = ({ children }) => {
   const [crisisLogs, setCrisisLogs] = useState([]);
   const [emergencyContacts, setEmergencyContacts] = useState([]);
   const [crisisActionPlan, setCrisisActionPlan] = useState('');
+  const [userName, setUserName] = useState('');
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
   // Load data from localStorage on initial mount
   useEffect(() => {
     const storedJournalEntries = localStorage.getItem('journalEntries');
     const storedCrisisLogs = localStorage.getItem('crisisLogs');
-    const storedEmergencyContacts = localStorage.getItem('emergencyContacts'); // New
-    const storedCrisisActionPlan = localStorage.getItem('crisisActionPlan');   // New
+    const storedEmergencyContacts = localStorage.getItem('emergencyContacts');
+    const storedCrisisActionPlan = localStorage.getItem('crisisActionPlan');
+    const storedUserName = localStorage.getItem('userName');
+    const storedOnboardingStatus = localStorage.getItem('hasCompletedOnboarding');
 
+    // Load user data
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+    if (storedOnboardingStatus === 'true') {
+      setHasCompletedOnboarding(true);
+    }
+
+    // Load existing data...
     if (storedJournalEntries) {
       try {
         setJournalEntries(JSON.parse(storedJournalEntries));
@@ -79,6 +92,18 @@ export const HealthDataProvider = ({ children }) => {
     }
   }, []); // Empty dependency array means this runs once on mount
 
+  // Save user name to localStorage whenever it changes
+  useEffect(() => {
+    if (userName) {
+      localStorage.setItem('userName', userName);
+    }
+  }, [userName]);
+
+  // Save onboarding status to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('hasCompletedOnboarding', hasCompletedOnboarding.toString());
+  }, [hasCompletedOnboarding]);
+
   // Save journal entries to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
@@ -89,58 +114,94 @@ export const HealthDataProvider = ({ children }) => {
     localStorage.setItem('crisisLogs', JSON.stringify(crisisLogs));
   }, [crisisLogs]);
 
-  // Save emergency contacts to localStorage whenever they change (New)
+  // Save emergency contacts to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
   }, [emergencyContacts]);
 
-  // Save crisis action plan to localStorage whenever it changes (New)
+  // Save crisis action plan to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('crisisActionPlan', crisisActionPlan); // Save as plain string
   }, [crisisActionPlan]);
 
   // Function to add a new journal entry
   const addJournalEntry = (entry) => {
-    setJournalEntries((prevEntries) => [entry, ...prevEntries]);
+    setJournalEntries((prevEntries) => [...prevEntries, entry]);
   };
 
   // Function to add a new crisis log
   const addCrisisLog = (log) => {
-    setCrisisLogs((prevLogs) => [log, ...prevLogs]);
+    setCrisisLogs((prevLogs) => [...prevLogs, log]);
   };
 
-  // Functions for Emergency Contacts (New)
+  // Functions for Emergency Contacts
   const addEmergencyContact = (contact) => {
-    setEmergencyContacts((prevContacts) => [...prevContacts, { id: Date.now(), ...contact }]);
+    const newContact = {
+      id: contact.id || Date.now(),
+      name: contact.name || `Contact ${emergencyContacts.length + 1}`,
+      phone: contact.phone || ''
+    };
+    setEmergencyContacts((prevContacts) => [...prevContacts, newContact]);
   };
 
   const updateEmergencyContact = (id, updatedContact) => {
     setEmergencyContacts((prevContacts) =>
-      prevContacts.map((contact) => (contact.id === id ? { ...contact, ...updatedContact } : contact))
+      prevContacts.map((contact) => 
+        contact.id === id 
+          ? { 
+              ...contact, 
+              name: updatedContact.name !== undefined ? updatedContact.name : contact.name,
+              phone: updatedContact.phone !== undefined ? updatedContact.phone : contact.phone
+            } 
+          : contact
+      )
     );
   };
 
   const deleteEmergencyContact = (id) => {
-    setEmergencyContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== id));
+    setEmergencyContacts((prevContacts) => 
+      prevContacts.filter((contact) => contact.id !== id)
+    );
   };
 
-  // Function to update Crisis Action Plan (New)
+  // Function to update crisis action plan
   const updateCrisisActionPlan = (plan) => {
     setCrisisActionPlan(plan);
   };
 
-  // The value that will be provided to consumers of this context
+  // User personalization functions
+  const updateUserName = (name) => {
+    const trimmedName = name.trim();
+    setUserName(trimmedName);
+  };
+
+  const completeOnboarding = (name) => {
+    const trimmedName = name.trim();
+    setUserName(trimmedName);
+    setHasCompletedOnboarding(true);
+  };
+
+  const getDisplayName = () => {
+    return userName || 'Warrior';
+  };
+
+  // Context value object
   const contextValue = {
     journalEntries,
-    addJournalEntry,
     crisisLogs,
+    emergencyContacts,
+    crisisActionPlan,
+    userName,
+    hasCompletedOnboarding,
+    addJournalEntry,
     addCrisisLog,
-    emergencyContacts,          // New
-    addEmergencyContact,        // New
-    updateEmergencyContact,     // New
-    deleteEmergencyContact,     // New
-    crisisActionPlan,           // New
-    updateCrisisActionPlan,     // New
+    addEmergencyContact,
+    updateEmergencyContact,
+    deleteEmergencyContact,
+    updateCrisisActionPlan,
+    updateUserName,
+    completeOnboarding,
+    getDisplayName,
   };
 
   return (

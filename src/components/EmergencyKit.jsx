@@ -10,15 +10,19 @@ function EmergencyKit() {
   const [nameInput, setNameInput] = useState('');
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
-  // Removed the useEffect for default contacts from here.
-  // The HealthDataContext now handles initializing default contacts if localStorage is empty.
-
   const saveContact = (index) => {
     const contact = emergencyContacts[index];
+    
+    // Validate name is not empty
+    const finalName = nameInput.trim();
+    if (!finalName) {
+      toast.error('Contact name cannot be empty');
+      return;
+    }
+
     const updatedContact = {
-      ...contact,
-      name: nameInput || contact.name, // Keep existing name if input is empty
-      phone: phoneInput
+      name: finalName,
+      phone: phoneInput.trim()
     };
 
     updateEmergencyContact(contact.id, updatedContact);
@@ -26,7 +30,7 @@ function EmergencyKit() {
     setEditingIndex(null);
     setPhoneInput('');
     setNameInput('');
-    toast.success('Contact saved!'); // Concise toast message
+    toast.success('Contact saved!');
   };
 
   const addNewContact = () => {
@@ -35,8 +39,31 @@ function EmergencyKit() {
       name: `Contact ${emergencyContacts.length + 1}`,
       phone: ''
     };
+    
     addEmergencyContact(newContact);
-    toast.success('New contact added!'); // Keep this toast for clarity
+    
+    // Automatically put new contact in edit mode
+    const newIndex = emergencyContacts.length; // This will be the index of the new contact
+    setTimeout(() => {
+      setEditingIndex(newIndex);
+      setNameInput(newContact.name);
+      setPhoneInput('');
+    }, 100); // Small delay to ensure state update
+    
+    toast.success('New contact added! Please customize the name and phone number.');
+  };
+
+  const startEditingContact = (index) => {
+    const contact = emergencyContacts[index];
+    setEditingIndex(index);
+    setNameInput(contact.name);
+    setPhoneInput(contact.phone);
+  };
+
+  const cancelEditing = () => {
+    setEditingIndex(null);
+    setPhoneInput('');
+    setNameInput('');
   };
 
   const removeContact = (contactId) => {
@@ -54,7 +81,7 @@ function EmergencyKit() {
             onClick={() => {
               deleteEmergencyContact(contactId);
               toast.dismiss(t.id);
-              toast.success('Contact removed.'); // Concise toast message
+              toast.success('Contact removed.');
             }}
           >
             Remove
@@ -67,7 +94,7 @@ function EmergencyKit() {
           </button>
         </div>
       </div>
-    ), { duration: 10000 }); // Keep duration long for confirmation
+    ), { duration: 10000 });
   };
 
   const sendLocationToContacts = () => {
@@ -86,7 +113,6 @@ function EmergencyKit() {
         (position) => {
           const { latitude, longitude } = position.coords;
           const timestamp = new Date().toLocaleString();
-          // Corrected Google Maps URL
           const locationLink = `https://maps.google.com/?q=${latitude},${longitude}`;
           const message = `🚨 CRISIS ALERT: I'm having a health crisis and need immediate help!
 Time: ${timestamp}
@@ -94,22 +120,9 @@ My location: ${locationLink}
 This is an automated emergency alert from my health app.`;
 
           toast.dismiss('location');
-
-          if (navigator.share) {
-            navigator.share({
-              title: '🚨 Crisis Alert',
-              text: message
-            }).then(() => {
-              logCrisisAlert(contactsWithPhones.length, `${latitude}, ${longitude}`);
-              toast.success('Crisis alert shared!'); // Concise toast message
-            }).catch((error) => {
-              console.warn('Native share failed or was cancelled:', error);
-              fallbackSharing(message, contactsWithPhones);
-            });
-          } else {
-            fallbackSharing(message, contactsWithPhones);
-          }
           setIsGettingLocation(false);
+
+          fallbackSharing(message, contactsWithPhones);
         },
         (error) => {
           console.error('Location error:', error);
@@ -183,7 +196,7 @@ This is an automated emergency alert from my health app.`;
   const shareViaWhatsApp = (message, contacts) => {
     let sharedCount = 0;
     contacts.forEach(contact => {
-      const cleanPhone = contact.phone.replace(/\D/g, ''); // Remove non-digits
+      const cleanPhone = contact.phone.replace(/\D/g, '');
       if (cleanPhone) {
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
@@ -212,13 +225,14 @@ This is an automated emergency alert from my health app.`;
       id: Date.now(),
       date: new Date().toISOString().split('T')[0],
       time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      severity: 9, // Assuming high severity for an emergency alert
+      severity: 9,
       duration: 'Immediate',
       triggers: ['Emergency Button Press'],
       medicationsUsed: '',
       location: locationInfo,
       circumstances: `Crisis Alert Button pressed - Alert sent to ${contactCount} contact(s).`,
     });
+    toast.success(`Emergency alert initiated to ${contactCount} contact(s)!`);
   };
 
   return (
@@ -239,7 +253,7 @@ This is an automated emergency alert from my health app.`;
           <span>{isGettingLocation ? 'Getting Location...' : '🆘 CRISIS ALERT - Send Location'}</span>
         </button>
         <p className="mt-4 text-sm opacity-80">
-          Shares your location with emergency contacts via native sharing, WhatsApp, or SMS.
+          Sends your location with emergency contacts via WhatsApp or SMS.
           Requires phone numbers with country codes (e.g., +1234567890).
         </p>
       </section>
@@ -266,7 +280,7 @@ This is an automated emergency alert from my health app.`;
                       type="text"
                       value={nameInput}
                       onChange={(e) => setNameInput(e.target.value)}
-                      placeholder={contact.name || "Contact Name"}
+                      placeholder="Contact Name (e.g., Mom, Dr. Smith, Work Emergency)"
                       className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <input
@@ -275,7 +289,7 @@ This is an automated emergency alert from my health app.`;
                       onChange={(e) => setPhoneInput(e.target.value)}
                       placeholder="e.g., +1234567890"
                       className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      autoFocus // Auto-focus on phone input when editing
+                      autoFocus
                     />
                     <div className="flex gap-2">
                       <button
@@ -285,11 +299,7 @@ This is an automated emergency alert from my health app.`;
                         Save
                       </button>
                       <button
-                        onClick={() => {
-                          setEditingIndex(null);
-                          setPhoneInput('');
-                          setNameInput('');
-                        }}
+                        onClick={cancelEditing}
                         className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm font-medium"
                       >
                         Cancel
@@ -299,16 +309,12 @@ This is an automated emergency alert from my health app.`;
                 </div>
               ) : (
                 <div className="w-full bg-white border border-gray-300 p-4 rounded-lg flex justify-between items-center hover:bg-gray-50 transition-colors">
-                  {/* Clickable area for dialing or editing */}
                   <button
                     onClick={() => {
-                      // If phone exists, attempt to dial, otherwise go to edit mode
                       if (contact.phone) {
                         window.location.href = `tel:${contact.phone}`;
                       } else {
-                        setEditingIndex(index);
-                        setPhoneInput(contact.phone);
-                        setNameInput(contact.name);
+                        startEditingContact(index);
                       }
                     }}
                     className="flex-1 flex justify-between items-center text-left"
@@ -318,13 +324,22 @@ This is an automated emergency alert from my health app.`;
                       📞 {contact.phone || 'Add Number'}
                     </span>
                   </button>
-                  <button
-                    onClick={() => removeContact(contact.id)}
-                    className="ml-3 text-red-500 hover:text-red-700 text-sm p-1 rounded-full hover:bg-red-50"
-                    title="Remove Contact"
-                  >
-                    ✕
-                  </button>
+                  <div className="flex items-center gap-2 ml-3">
+                    <button
+                      onClick={() => startEditingContact(index)}
+                      className="text-blue-500 hover:text-blue-700 text-sm p-1 rounded-full hover:bg-blue-50"
+                      title="Edit Contact"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => removeContact(contact.id)}
+                      className="text-red-500 hover:text-red-700 text-sm p-1 rounded-full hover:bg-red-50"
+                      title="Remove Contact"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
