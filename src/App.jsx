@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 import FloatingActionButton from './components/FloatingActionButton';
 import Dashboard from './components/Dashboard';
@@ -27,28 +28,52 @@ const Home = () => (
 
 function App() {
   return (
-   
-      <HealthDataProvider>
-        <div className="min-h-screen bg-gray-100 font-sans flex flex-col">
-          <Header />
-          <main className="flex-grow container mx-auto p-4">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/dashboard" element={<Dashboard />} /> {/* Use the actual Dashboard component */}
-              <Route path="/journal" element={<Journal />} />
-              <Route path="/crisis-log" element={<CrisisLog />} />
-              <Route path="/analytics" element={<Analyticss />} />
-              <Route path="/motivation" element={<Motivation />} />
-              <Route path="/medical-reports" element={<MedicalReports />} /> {/* Add route for Medical Reports */}
-              <Route path="/emergency-kit" element={<EmergencyKit />} /> {/* Add route for full Emergency Kit */}
-            </Routes>
-          </main>
-          <FloatingActionButton />
-          <Footer />
-          <PWAInstallPrompt />
-        </div>
-      </HealthDataProvider>
+    <HealthDataProvider>
+      <div className="min-h-screen bg-gray-100 font-sans flex flex-col">
+        <Header />
+        <main className="flex-grow container mx-auto p-4">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/journal" element={<Journal />} />
+            <Route path="/crisis-log" element={<CrisisLog />} />
+            <Route path="/analytics" element={<Analyticss />} />
+            <Route path="/motivation" element={<Motivation />} />
+            <Route path="/medical-reports" element={<MedicalReports />} />
+            <Route path="/emergency-kit" element={<EmergencyKit />} />
+          </Routes>
+        </main>
+        <FloatingActionButton />
+        <Footer />
+        <PWAInstallPrompt />
+        <Toaster 
+          position="top-center"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 5000,
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+      </div>
+    </HealthDataProvider>
   );
 }
 
 export default App;
+

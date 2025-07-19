@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHealthData } from '../context/HealthDataContext'; // Import the custom hook
+import toast from 'react-hot-toast';
 
 function Journal() {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ function Journal() {
     setPersonalNotes('');
 
     // Navigate back to dashboard or show a success message
-    alert('Journal entry saved successfully!');
+    toast.success('Journal entry saved successfully!');
     navigate('/dashboard');
   };
 

@@ -1,3 +1,4 @@
+// src/context/HealthDataContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
 // Create the context
@@ -12,7 +13,6 @@ export const useHealthData = () => {
 export const HealthDataProvider = ({ children }) => {
   const [journalEntries, setJournalEntries] = useState([]);
   const [crisisLogs, setCrisisLogs] = useState([]);
-  // New states for Emergency Kit
   const [emergencyContacts, setEmergencyContacts] = useState([]);
   const [crisisActionPlan, setCrisisActionPlan] = useState('');
 
@@ -39,15 +39,41 @@ export const HealthDataProvider = ({ children }) => {
         setCrisisLogs([]);
       }
     }
-    // Load Emergency Kit data
+    // Load Emergency Kit data with defaults if nothing found or empty array
     if (storedEmergencyContacts) {
       try {
-        setEmergencyContacts(JSON.parse(storedEmergencyContacts));
+        const parsedContacts = JSON.parse(storedEmergencyContacts);
+        if (parsedContacts.length > 0) {
+          setEmergencyContacts(parsedContacts);
+        } else {
+          // If stored array is empty, initialize with defaults
+          const defaultContacts = [
+            { id: 1, name: 'Contact 1', phone: '' },
+            { id: 2, name: 'Contact 2', phone: '' },
+            { id: 3, name: 'Contact 3', phone: '' }
+          ];
+          setEmergencyContacts(defaultContacts);
+        }
       } catch (error) {
         console.error("Failed to parse emergency contacts from localStorage:", error);
-        setEmergencyContacts([]);
+        // On parsing error, revert to defaults
+        const defaultContacts = [
+          { id: 1, name: 'Contact 1', phone: '' },
+          { id: 2, name: 'Contact 2', phone: '' },
+          { id: 3, name: 'Contact 3', phone: '' }
+        ];
+        setEmergencyContacts(defaultContacts);
       }
+    } else {
+      // If nothing in localStorage for contacts, initialize with defaults
+      const defaultContacts = [
+        { id: 1, name: 'Contact 1', phone: '' },
+        { id: 2, name: 'Contact 2', phone: '' },
+        { id: 3, name: 'Contact 3', phone: '' }
+      ];
+      setEmergencyContacts(defaultContacts);
     }
+
     if (storedCrisisActionPlan) {
       setCrisisActionPlan(storedCrisisActionPlan); // Stored as plain string
     }

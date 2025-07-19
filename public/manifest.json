@@ -1,6 +1,6 @@
 {
   "name": "The Warrior's Journal",
-  "short_name": "Warrior Journal",
+  "short_name": "Warrior's Journal",
   "description": "Your Digital Health Companion for managing health data and crisis situations",
   "start_url": "/",
   "display": "standalone",

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHealthData } from '../context/HealthDataContext';
+import toast from 'react-hot-toast';
 
 function CrisisLog() {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ function CrisisLog() {
     setLocation('');
     setCircumstances('');
 
-    alert('Crisis log saved successfully!');
+    toast.success('Crisis log saved successfully!');
     navigate('/dashboard'); // Go back to dashboard after saving
   };
 
