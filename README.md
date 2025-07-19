@@ -1,12 +1,34 @@
-# React + Vite
+# The Warrior's Journal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive sickle cell disease management and health tracking application built with React and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Daily Health Journal** - Track pain levels, mood, medications, and symptoms
+- **Crisis Log** - Record and monitor pain crisis episodes
+- **Emergency Kit** - Quick access to emergency contacts and crisis management tools
+- **Health Analytics** - Visualize health patterns and trends
+- **PWA Support** - Works offline and can be installed on mobile devices
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React 19
+- Vite
+- Tailwind CSS
+- React Router
+- Recharts for analytics
+- PWA capabilities
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
+```
+
+## Live App
+
+Visit [The Warrior's Journal](https://thewarriorsjournal.vercel.app/) to start tracking your health journey.
+
+Built for sickle cell warriors, by warriors. 🛡️
+
