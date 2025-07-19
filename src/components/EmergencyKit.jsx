@@ -253,8 +253,8 @@ This is an automated emergency alert from my health app.`;
           <span>{isGettingLocation ? 'Getting Location...' : '🆘 CRISIS ALERT - Send Location'}</span>
         </button>
         <p className="mt-4 text-sm opacity-80">
-          Sends your location with emergency contacts via WhatsApp or SMS.
-          Requires phone numbers with country codes (e.g., +1234567890).
+          Sends your location with emergency contacts via WhatsApp or SMS. <br />
+          Requires phone numbers with country codes (e.g., +2341234567890).
         </p>
       </section>
 
@@ -287,7 +287,7 @@ This is an automated emergency alert from my health app.`;
                       type="tel"
                       value={phoneInput}
                       onChange={(e) => setPhoneInput(e.target.value)}
-                      placeholder="e.g., +1234567890"
+                      placeholder="Add country codes (e.g., +234...)"
                       className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       autoFocus
                     />
@@ -300,7 +300,7 @@ This is an automated emergency alert from my health app.`;
                       </button>
                       <button
                         onClick={cancelEditing}
-                        className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm font-medium"
+                        className="bg-red-500 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm font-medium"
                       >
                         Cancel
                       </button>

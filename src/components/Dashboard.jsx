@@ -21,7 +21,7 @@ function Dashboard() {
         {displayName}'s Sickle Cell Disease Management Dashboard
       </h1>
       <p className="text-lg text-gray-600 mb-6">
-        Welcome back, {displayName}! Monitor your health patterns and manage your sickle cell disease effectively.
+        Welcome back, {displayName}! <br /> Monitor your health patterns and manage your sickle cell disease effectively.
       </p>
       
       {/* Emergency Kit Section - Always visible */}

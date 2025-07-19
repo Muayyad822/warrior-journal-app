@@ -23,9 +23,9 @@ const Home = () => {
   
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)]">
-      <h1 className="text-4xl font-bold mb-6 text-gray-800">The Warrior's Journal</h1>
+      {/* <h1 className="text-4xl font-bold mb-6 text-gray-800">The Warrior's Journal</h1>
       <h2 className="text-2xl text-gray-700 mb-4">Sickle Cell Disease Management & Health Tracking</h2>
-      <p className="text-xl text-gray-600 mb-4 text-center max-w-2xl">Your comprehensive digital health companion for managing sickle cell disease, tracking pain crises, and monitoring health patterns</p>
+      <p className="text-xl text-gray-600 mb-4 text-center max-w-2xl">Your comprehensive digital health companion for managing sickle cell disease, tracking pain crises, and monitoring health patterns</p> */}
       <p className="text-lg text-blue-600 mb-8 font-medium">
         Welcome to your health journey, {displayName}!
       </p>
@@ -34,7 +34,7 @@ const Home = () => {
       </Link>
       
       {/* SEO Content Section */}
-      <div className="mt-12 max-w-4xl text-center space-y-6">
+      {/* <div className="mt-12 max-w-4xl text-center space-y-6">
         <h3 className="text-2xl font-semibold text-gray-800">Comprehensive Sickle Cell Disease Management</h3>
         <div className="grid md:grid-cols-3 gap-6 mt-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -50,7 +50,7 @@ const Home = () => {
             <p className="text-gray-600">Quick access to emergency contacts, crisis action plans, and medical information when you need it most.</p>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
