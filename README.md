@@ -30,5 +30,5 @@ npm run dev
 
 Visit [The Warrior's Journal](https://thewarriorsjournal.vercel.app/) to start tracking your health journey.
 
-Built for sickle cell warriors, [Muayyad](https://abdulmuizjimoh.vercel.app/). 🛡️
+Built for sickle cell warriors by [Muayyad](https://abdulmuizjimoh.vercel.app/). 🛡️
 
