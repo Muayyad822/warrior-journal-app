@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
     <div>
-      <p className="bg-blue-600 text-center text-sm text-blue-200 mt-8 p-4 border-t border-blue-600">
+      <p className="bg-blue-600 text-center text-sm text-blue-200 mt-8 p-2 border-t border-blue-600">
         Built with care by{" "}
         <a
           href="https://abdulmuizjimoh.vercel.app/"

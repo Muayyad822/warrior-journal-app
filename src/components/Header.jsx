@@ -104,7 +104,7 @@ function Header() {
                 onClick={startEditingName}
                 className="flex items-center space-x-1 hover:text-blue-200 transition-colors"
               >
-                <span>Hello, {displayName}</span>
+                <span>Hi, {displayName}</span>
                 <span className="text-xs">✏️</span>
               </button>
             )}
@@ -132,11 +132,11 @@ function Header() {
           ></div>
           
           {/* Sidebar */}
-          <div className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-blue-600 text-white shadow-xl transform transition-transform duration-300 ease-in-out ${
+          <div className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-purple-700 text-white shadow-xl transform transition-transform duration-300 ease-in-out ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}>
             {/* Sidebar Header */}
-            <div className="flex justify-between items-center p-4 border-b border-blue-500">
+            <div className="flex justify-between items-center p-4 border-b border-purple-700">
               <h3 className="text-lg font-semibold">Menu</h3>
               <button
                 onClick={closeMobileMenu}
@@ -190,8 +190,8 @@ function Header() {
               </nav>
               
               {/* User Greeting Section */}
-              <div className="mt-auto border-t border-blue-500 p-4">
-                <div className="bg-blue-700 rounded-lg p-4">
+              <div className=" border-t border-purple-500 p-4">
+                <div className="bg-purple-900 rounded-lg p-4">
                   {isEditingName ? (
                     <div className="space-y-3">
                       <input
@@ -223,7 +223,7 @@ function Header() {
                       onClick={startEditingName}
                       className="flex items-center justify-between w-full hover:text-blue-200 transition-colors"
                     >
-                      <span>Hello, {displayName}</span>
+                      <span>Hi, {displayName}</span>
                       <span className="text-sm">✏️</span>
                     </button>
                   )}
