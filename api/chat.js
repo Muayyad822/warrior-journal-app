@@ -7,9 +7,53 @@ const model = genAI.getGenerativeModel({
     temperature: 0.8,
     topP: 0.9,
     topK: 40,
-    maxOutputTokens: 300,
+    maxOutputTokens: 150, 
   },
 });
+
+// Simple response cache (in production, use Redis)
+const responseCache = new Map();
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
+// Common responses cache for frequently asked questions
+const commonResponses = {
+  'how are you': "I'm here and ready to support you! How are you feeling today, warrior?",
+  'hello': `Hello ${displayName || 'warrior'}! I'm Teni, your health companion. How can I support you today?`,
+  'hi': `Hi there! I'm so glad you're here. How are you doing today?`,
+  'pain': "I understand pain can be really challenging. Remember to stay hydrated, rest when needed, and don't hesitate to reach out to your healthcare team if it gets severe.",
+  'crisis': "If you're experiencing a crisis, please seek immediate medical attention. In the meantime, try to stay calm, hydrate, and use your pain management techniques.",
+};
+
+function getCachedResponse(message) {
+  const normalizedMessage = message.toLowerCase().trim();
+  
+  // Check for exact common responses
+  for (const [key, response] of Object.entries(commonResponses)) {
+    if (normalizedMessage.includes(key)) {
+      return response.replace('${displayName || \'warrior\'}', displayName || 'warrior');
+    }
+  }
+  
+  // Check cache
+  const cacheKey = normalizedMessage;
+  const cached = responseCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.response;
+  }
+  
+  return null;
+}
+
+function setCachedResponse(message, response) {
+  const cacheKey = message.toLowerCase().trim();
+  responseCache.set(cacheKey, {
+    response,
+    timestamp: Date.now()
+  });
+}
+
+// Add rate limiting storage (in production, use Redis or database)
+const userRequests = new Map();
 
 export default async function handler(req, res) {
   // CORS headers
@@ -33,37 +77,40 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Valid message is required' });
     }
 
+    // Rate limiting: 15 requests per 5 minutes per user
+    const userKey = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
+    const now = Date.now();
+    const fiveMinutes = 5 * 60 * 1000;
+    
+    if (!userRequests.has(userKey)) {
+      userRequests.set(userKey, []);
+    }
+    
+    const userRequestTimes = userRequests.get(userKey);
+    // Remove requests older than 5 minutes
+    const recentRequests = userRequestTimes.filter(time => now - time < fiveMinutes);
+    
+    if (recentRequests.length >= 15) {
+      return res.status(429).json({ 
+        error: 'Too many requests. Please wait a moment before trying again.',
+        type: 'rate_limit'
+      });
+    }
+    
+    // Add current request time
+    recentRequests.push(now);
+    userRequests.set(userKey, recentRequests);
+
     // Create Teni's personality and health-focused system prompt
-    const systemPrompt = `You are Teni, a warm and supportive AI health companion specifically designed for people with sickle cell disease. You're speaking with ${displayName || 'a warrior'}.
+    const systemPrompt = `You are Teni, a warm and supportive AI health companion for people with sickle cell disease. You're speaking with ${displayName || 'a warrior'}.
 
-Your personality:
-- Caring, empathetic, and encouraging
-- Knowledgeable about sickle cell disease challenges
-- Always positive but realistic about the condition
-- Use a warm, friendly tone like talking to a close friend
+Your role: Provide emotional support, general wellness tips, and encouragement. Keep responses brief (1-2 sentences), empathetic, and never give medical diagnoses. Always encourage consulting healthcare providers for medical decisions.`;
 
-Your role:
-- Provide emotional support and encouragement
-- Share general wellness tips for sickle cell management
-- Offer practical advice on hydration, pain management, stress reduction
-- Celebrate small victories and acknowledge struggles
-- Remind users they are "warriors" managing a challenging condition
-
-Important guidelines:
-- Keep responses conversational and under 3 sentences
-- Never provide specific medical diagnoses or treatment recommendations
-- Always encourage consulting healthcare providers for medical decisions
-- Focus on emotional support, general wellness, and self-care
-- If asked about crisis situations, emphasize seeking immediate medical care
-- Use encouraging language and acknowledge their strength
-
-Remember: You're Teni, their supportive health companion who understands the sickle cell journey.`;
-
-    // Build conversation context
+    // Build conversation context - reduced to last 4 messages for efficiency
     let conversationContext = systemPrompt + "\n\nRecent conversation:\n";
     
-    // Include last 8 messages for context
-    const recentHistory = (chatHistory || []).slice(-8);
+    // Include last 4 messages for context (reduced from 8)
+    const recentHistory = (chatHistory || []).slice(-4);
     recentHistory.forEach(msg => {
       if (msg.sender === 'user') {
         conversationContext += `${displayName || 'User'}: ${msg.text}\n`;
@@ -73,6 +120,16 @@ Remember: You're Teni, their supportive health companion who understands the sic
     });
     
     conversationContext += `\n${displayName || 'User'}: ${message}\n\nTeni:`;
+
+    // Check for cached response first
+    const cachedResponse = getCachedResponse(message);
+    if (cachedResponse) {
+      return res.status(200).json({ 
+        response: cachedResponse,
+        timestamp: new Date().toISOString(),
+        cached: true
+      });
+    }
 
     // Generate AI response
     const result = await model.generateContent(conversationContext);
@@ -88,6 +145,9 @@ Remember: You're Teni, their supportive health companion who understands the sic
     if (!aiResponse.match(/[.!?]$/)) {
       aiResponse += '.';
     }
+
+    // Cache the response for future use
+    setCachedResponse(message, aiResponse);
 
     return res.status(200).json({ 
       response: aiResponse,
@@ -118,3 +178,8 @@ Remember: You're Teni, their supportive health companion who understands the sic
     });
   }
 }
+
+
+
+
+
