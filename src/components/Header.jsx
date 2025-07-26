@@ -56,10 +56,11 @@ function Header() {
 
   return (
     <>
-      <header className="w-full m-auto bg-purple-700 text-white mb-6 p-6 shadow-lg">
+      <header className="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-40">
+ 
         <div className="container mx-auto flex justify-between items-center">
           {/* App Title/Logo */}
-          <Link to="/" className="text-2xl font-bold">
+          <Link to="/dashboard" className="text-2xl font-bold">
             The Warrior's Journal
           </Link>
 
