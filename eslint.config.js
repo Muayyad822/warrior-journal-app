@@ -4,7 +4,15 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default defineConfig([
+export default [
+  {
+    files: ['backend/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+      ecmaVersion: 2020,
+      sourceType: 'module',
+    },
+  },
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
@@ -26,4 +34,5 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
-])
+]
+

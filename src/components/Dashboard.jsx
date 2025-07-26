@@ -70,6 +70,13 @@ function Dashboard() {
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Health Management Tools</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
+            to="/ai-chat"
+            className="bg-amber-600 hover:bg-amber-700 text-white p-4 rounded-lg text-center transition-colors"
+          >
+            <div className="text-2xl mb-2">🤖</div>
+            <div className="font-semibold">AI Health Companion</div>
+          </Link>
+          <Link
             to="/journal"
             className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg text-center transition-colors"
           >
@@ -97,6 +104,7 @@ function Dashboard() {
             <div className="text-2xl mb-2">📋</div>
             <div className="font-semibold">Medical Reports</div>
           </Link>
+          
         </div>
       </section>
     </div>

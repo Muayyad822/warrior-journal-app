@@ -10,37 +10,43 @@ function FloatingActionButton() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
+      {/* Quick Action Buttons */}
       {isOpen && (
-        <div className="mb-3 flex flex-col space-y-2">
+        <div className="absolute bottom-16 right-0 space-y-3 mb-2">
           <Link
-            to="/crisis-log"
-            className="bg-red-500 text-white p-3 rounded-full shadow-lg hover:bg-red-600 transition-colors text-sm text-center"
+            to="/ai-chat"
+            className="flex items-center justify-center w-12 h-12 bg-purple-500 hover:bg-purple-600 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+            title="AI Health Companion"
             onClick={() => setIsOpen(false)}
           >
-            Crisis Log
+            🤖
           </Link>
           <Link
             to="/journal"
-            className="bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition-colors text-sm text-center"
+            className="flex items-center justify-center w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+            title="Daily Journal"
             onClick={() => setIsOpen(false)}
           >
-            Journal
+            📝
           </Link>
           <Link
-            to="/dashboard"
-            className="bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors text-sm text-center"
+            to="/crisis-log"
+            className="flex items-center justify-center w-12 h-12 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+            title="Crisis Log"
             onClick={() => setIsOpen(false)}
           >
-            Dashboard
+            🚨
           </Link>
         </div>
       )}
+
+      {/* Main FAB */}
       <button
         onClick={toggleMenu}
-        className="bg-purple-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center text-3xl font-bold hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-        aria-label="Quick Navigation"
+        className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110"
+        title="Quick Actions"
       >
-        {isOpen ? '❌' : '⚡'}
+        {isOpen ? '✕' : '⚡'}
       </button>
     </div>
   );
