@@ -16,21 +16,22 @@ const responseCache = new Map();
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
 // Common responses cache for frequently asked questions
-const commonResponses = {
+const getCommonResponses = (displayName) => ({
   'how are you': "I'm here and ready to support you! How are you feeling today, warrior?",
   'hello': `Hello ${displayName || 'warrior'}! I'm Teni, your health companion. How can I support you today?`,
   'hi': `Hi there! I'm so glad you're here. How are you doing today?`,
   'pain': "I understand pain can be really challenging. Remember to stay hydrated, rest when needed, and don't hesitate to reach out to your healthcare team if it gets severe.",
   'crisis': "If you're experiencing a crisis, please seek immediate medical attention. In the meantime, try to stay calm, hydrate, and use your pain management techniques.",
-};
+});
 
-function getCachedResponse(message) {
+function getCachedResponse(message, displayName) {
   const normalizedMessage = message.toLowerCase().trim();
+  const commonResponses = getCommonResponses(displayName);
   
   // Check for exact common responses
   for (const [key, response] of Object.entries(commonResponses)) {
     if (normalizedMessage.includes(key)) {
-      return response.replace('${displayName || \'warrior\'}', displayName || 'warrior');
+      return response;
     }
   }
   
@@ -61,7 +62,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Content-Type', 'application/json'); // Ensure JSON response
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -70,13 +71,6 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
-  // Add at the top of your handler for debugging
-  console.log('Environment check:', {
-    hasApiKey: !!process.env.GEMINI_API_KEY,
-    nodeEnv: process.env.NODE_ENV,
-    apiKeyLength: process.env.GEMINI_API_KEY?.length || 0
-  });
 
   try {
     const { message, chatHistory, displayName } = req.body;
@@ -123,6 +117,16 @@ export default async function handler(req, res) {
     recentRequests.push(now);
     userRequests.set(userKey, recentRequests);
 
+    // Check for cached response first
+    const cachedResponse = getCachedResponse(message, displayName);
+    if (cachedResponse) {
+      return res.status(200).json({ 
+        response: cachedResponse,
+        timestamp: new Date().toISOString(),
+        cached: true
+      });
+    }
+
     // Create Teni's personality and health-focused system prompt
     const systemPrompt = `You are Teni, a warm and supportive AI health companion for people with sickle cell disease. You're speaking with ${displayName || 'a warrior'}.
 
@@ -142,16 +146,6 @@ Your role: Provide emotional support, general wellness tips, and encouragement. 
     });
     
     conversationContext += `\n${displayName || 'User'}: ${message}\n\nTeni:`;
-
-    // Check for cached response first
-    const cachedResponse = getCachedResponse(message);
-    if (cachedResponse) {
-      return res.status(200).json({ 
-        response: cachedResponse,
-        timestamp: new Date().toISOString(),
-        cached: true
-      });
-    }
 
     // Generate AI response
     const result = await model.generateContent(conversationContext);
@@ -212,8 +206,3 @@ Your role: Provide emotional support, general wellness tips, and encouragement. 
     });
   }
 }
-
-
-
-
-
