@@ -58,12 +58,36 @@ function AIChat() {
         }),
       });
 
+      // Check if response is ok before parsing JSON
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            errorData = await response.json();
+          } catch (jsonError) {
+            console.error('Failed to parse error JSON:', jsonError);
+            throw new Error(`HTTP ${response.status}: Server returned non-JSON error`);
+          }
+        } else {
+          // Server returned HTML or other non-JSON content
+          const textResponse = await response.text();
+          console.error('Non-JSON response:', textResponse);
+          throw new Error(`HTTP ${response.status}: Server error`);
+        }
+        
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
 
-      const data = await response.json();
+      // Parse successful JSON response
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error('Failed to parse success JSON:', jsonError);
+        throw new Error('Server returned invalid JSON response');
+      }
       
       const aiMessage = {
         sender: 'ai',
@@ -85,6 +109,8 @@ function AIChat() {
         toast.error('Message blocked. Please rephrase your question.');
       } else if (error.message.includes('Failed to fetch')) {
         toast.error('Connection error. Please check your internet and try again.');
+      } else if (error.message.includes('JSON')) {
+        toast.error('Server communication error. Please try again.');
       } else {
         toast.error('AI service unavailable. Please try again later.');
       }

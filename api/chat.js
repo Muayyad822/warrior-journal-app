@@ -61,6 +61,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json'); // Ensure JSON response
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -70,11 +71,32 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Add at the top of your handler for debugging
+  console.log('Environment check:', {
+    hasApiKey: !!process.env.GEMINI_API_KEY,
+    nodeEnv: process.env.NODE_ENV,
+    apiKeyLength: process.env.GEMINI_API_KEY?.length || 0
+  });
+
   try {
     const { message, chatHistory, displayName } = req.body;
 
+    // Validate request body exists
+    if (!req.body) {
+      return res.status(400).json({ error: 'Request body is required' });
+    }
+
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
       return res.status(400).json({ error: 'Valid message is required' });
+    }
+
+    // Check if GEMINI_API_KEY exists
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY not found in environment variables');
+      return res.status(500).json({ 
+        error: 'AI service configuration error',
+        type: 'config_error'
+      });
     }
 
     // Rate limiting: 15 requests per 5 minutes per user
@@ -157,6 +179,9 @@ Your role: Provide emotional support, general wellness tips, and encouragement. 
   } catch (error) {
     console.error('Gemini API error:', error);
     
+    // Ensure we always return JSON
+    res.setHeader('Content-Type', 'application/json');
+    
     // Return specific error types
     if (error.message?.includes('quota') || error.message?.includes('limit')) {
       return res.status(429).json({ 
@@ -172,9 +197,18 @@ Your role: Provide emotional support, general wellness tips, and encouragement. 
       });
     }
 
+    if (error.message?.includes('API key')) {
+      return res.status(500).json({ 
+        error: 'AI service configuration error.',
+        type: 'config_error'
+      });
+    }
+
+    // Generic error fallback
     return res.status(500).json({ 
       error: 'AI service temporarily unavailable. Please try again.',
-      type: 'service_error'
+      type: 'service_error',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 }
