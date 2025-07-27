@@ -9,11 +9,9 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/((?!api|_next|favicon.ico|manifest.json|sw.js|robots.txt|sitemap.xml|assets).*)",
+      "source": "/((?!api|assets|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|xml|txt)).*)",
       "destination": "/index.html"
     }
   ]
 }
-
-
 
