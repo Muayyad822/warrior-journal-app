@@ -14,6 +14,7 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 import OnboardingWelcome from './components/OnboardingWelcome';
 import { HealthDataProvider, useHealthData } from './context/HealthDataContext';
 import Footer from './components/Footer';
+import AIChat from './components/AIChat';
 
 import { Analytics } from "@vercel/analytics/react"
 
@@ -77,7 +78,8 @@ const AppContent = () => {
           <Route path="/emergency-kit" element={<EmergencyKit />} />
         </Routes>
       </main>
-      <FloatingActionButton />
+      {/* <FloatingActionButton /> */}
+      <AIChat />
       <Footer />
       <PWAInstallPrompt />
       <Analytics />
