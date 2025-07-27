@@ -7,7 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://thewarriorsjournal.vercel.app',
+        target: process.env.NODE_ENV === 'production' 
+          ? 'https://thewarriorsjournal.vercel.app'
+          : 'http://localhost:3000',
         changeOrigin: true,
         secure: true
       }

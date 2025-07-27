@@ -1,8 +1,6 @@
 const CACHE_NAME = 'warrior-journal-v1';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/warriors-journal.png',
   '/manifest.json'
 ];
@@ -29,6 +27,9 @@ if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
       caches.open(CACHE_NAME)
         .then((cache) => {
           return cache.addAll(urlsToCache);
+        })
+        .catch((error) => {
+          console.log('Cache addAll failed:', error);
         })
     );
   });
