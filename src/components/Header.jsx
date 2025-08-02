@@ -70,6 +70,7 @@ function Header() {
             <Link to="/crisis-log" className="hover:text-blue-200">Crisis Log</Link>
             <Link to="/analytics" className="hover:text-blue-200">Analytics</Link>
             <Link to="/motivation" className="hover:text-blue-200">Motivation</Link>
+            <Link to="/guide" className="hover:text-blue-200">How to use app</Link>
           </nav>
 
           {/* User Greeting & Name Edit */}
@@ -186,6 +187,13 @@ function Header() {
                   onClick={closeMobileMenu}
                 >
                   Motivation
+                </Link>
+                <Link 
+                  to="/guide" 
+                  className="hover:text-blue-200 hover:bg-blue-700 py-3 px-3 rounded transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  How to use app
                 </Link>
               </nav>
               

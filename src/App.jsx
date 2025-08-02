@@ -15,8 +15,10 @@ import OnboardingWelcome from './components/OnboardingWelcome';
 import { HealthDataProvider, useHealthData } from './context/HealthDataContext';
 import Footer from './components/Footer';
 import AIChat from './components/AIChat';
+import GuidePage from './components/Guide';
 
 import { Analytics } from "@vercel/analytics/react"
+
 
 const Home = () => {
   const { getDisplayName } = useHealthData();
@@ -54,6 +56,7 @@ const AppContent = () => {
           <Route path="/motivation" element={<Motivation />} />
           <Route path="/medical-reports" element={<MedicalReports />} />
           <Route path="/emergency-kit" element={<EmergencyKit />} />
+          <Route path="/guide" element={<GuidePage />} />
         </Routes>
       </main>
       <AIChat />
