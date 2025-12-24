@@ -226,7 +226,7 @@ function Header() {
                       className="flex items-center justify-between w-full hover:text-blue-200 transition-colors"
                     >
                       <span>Hello, {displayName}</span>
-                      <span className="text-sm">✏️</span>
+                      <Pencil className="w-4 h-4" />
                     </button>
                   )}
                 </div>
