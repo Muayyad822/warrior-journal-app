@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useHealthData } from '../context/HealthDataContext';
+import { Lightbulb, Shield } from 'lucide-react';
 
 function Motivation() {
   const { getDisplayName } = useHealthData();
@@ -96,7 +97,7 @@ const healthTips = [
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {healthTips.map((tip, index) => (
             <div key={index} className="flex items-start space-x-3 bg-green-50 p-3 rounded-lg">
-              <div className="text-green-600 text-xl">💡</div>
+              <Lightbulb className="text-green-600 text-xl" />
               <p className="text-gray-700">{tip}</p>
             </div>
           ))}
@@ -110,7 +111,7 @@ const healthTips = [
           Every step you take in tracking your health is a step toward better understanding and managing your well-being.
         </p>
         <p className="text-md opacity-90">
-          You're not just surviving - you're thriving, one day at a time. Keep going, warrior! 🛡️
+          You're not just surviving - you're thriving, one day at a time. Keep going, warrior! <Shield className="inline w-6 h-6" />
         </p>
       </section>
     </div>

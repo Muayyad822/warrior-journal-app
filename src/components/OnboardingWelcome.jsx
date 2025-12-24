@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useHealthData } from '../context/HealthDataContext';
 import toast from 'react-hot-toast';
+import { Shield } from 'lucide-react';
 
 function OnboardingWelcome() {
   const { completeOnboarding } = useHealthData();
@@ -54,7 +55,7 @@ function OnboardingWelcome() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="text-6xl mb-4">🛡️</div>
+          <Shield className="text-6xl mb-4" />
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             Welcome to The Warrior's Journal
           </h1>

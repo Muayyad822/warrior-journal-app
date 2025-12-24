@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 
 function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -70,7 +71,7 @@ function PWAInstallPrompt() {
           onClick={handleDismiss}
           className="text-blue-100 hover:text-white ml-2"
         >
-          ✕
+          <X className="text-blue-100 hover:text-white ml-2" />
         </button>
       </div>
     </div>

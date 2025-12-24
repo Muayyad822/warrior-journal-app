@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useHealthData } from '../context/HealthDataContext';
 import toast from 'react-hot-toast';
+import { Pencil, Check, X } from 'lucide-react';
 
 function Header() {
   const { getDisplayName, updateUserName } = useHealthData();
@@ -91,13 +92,13 @@ function Header() {
                   onClick={saveName}
                   className="text-green-300 hover:text-green-100 text-sm"
                 >
-                  ✓
+                  <Check className="w-4 h-4" />
                 </button>
                 <button
                   onClick={cancelEditing}
                   className="text-red-300 hover:text-red-100 text-sm"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
             ) : (
@@ -105,8 +106,8 @@ function Header() {
                 onClick={startEditingName}
                 className="flex items-center space-x-1 hover:text-blue-200 transition-colors"
               >
-                <span>Hi, {displayName}</span>
-                <span className="text-xs">✏️</span>
+                <span>Hello, {displayName}</span>
+                <Pencil className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -231,8 +232,8 @@ function Header() {
                       onClick={startEditingName}
                       className="flex items-center justify-between w-full hover:text-blue-200 transition-colors"
                     >
-                      <span>Hi, {displayName}</span>
-                      <span className="text-sm">✏️</span>
+                      <span>Hello, {displayName}</span>
+                      <Pencil className="w-4 h-4" />
                     </button>
                   )}
                 </div>

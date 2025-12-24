@@ -46,7 +46,7 @@ const AppContent = () => {
   return (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col">
       <Header />
-      <main className="flex-grow container mx-auto p-4">
+      <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -92,6 +92,11 @@ const AppContent = () => {
 };
 
 function App() {
+  // Initialize notification service when app starts
+  useEffect(() => {
+    notificationService.restoreReminders();
+  }, []);
+
   return (
     <HealthDataProvider>
       <AppContent />
