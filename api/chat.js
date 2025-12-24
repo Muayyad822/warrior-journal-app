@@ -7,50 +7,9 @@ const model = genAI.getGenerativeModel({
     temperature: 0.8,
     topP: 0.9,
     topK: 40,
-    maxOutputTokens: 150, 
+    maxOutputTokens: 200, 
   },
 });
-
-// Simple response cache (in production, use Redis)
-const responseCache = new Map();
-const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
-
-// Common responses cache for frequently asked questions
-const commonResponses = {
-  'how are you': "I'm here and ready to support you! How are you feeling today, warrior?",
-  'hello': `Hello ${displayName || 'warrior'}! I'm Teni, your health companion. How can I support you today?`,
-  'hi': `Hi there! I'm so glad you're here. How are you doing today?`,
-  'pain': "I understand pain can be really challenging. Remember to stay hydrated, rest when needed, and don't hesitate to reach out to your healthcare team if it gets severe.",
-  'crisis': "If you're experiencing a crisis, please seek immediate medical attention. In the meantime, try to stay calm, hydrate, and use your pain management techniques.",
-};
-
-function getCachedResponse(message) {
-  const normalizedMessage = message.toLowerCase().trim();
-  
-  // Check for exact common responses
-  for (const [key, response] of Object.entries(commonResponses)) {
-    if (normalizedMessage.includes(key)) {
-      return response.replace('${displayName || \'warrior\'}', displayName || 'warrior');
-    }
-  }
-  
-  // Check cache
-  const cacheKey = normalizedMessage;
-  const cached = responseCache.get(cacheKey);
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    return cached.response;
-  }
-  
-  return null;
-}
-
-function setCachedResponse(message, response) {
-  const cacheKey = message.toLowerCase().trim();
-  responseCache.set(cacheKey, {
-    response,
-    timestamp: Date.now()
-  });
-}
 
 // Add rate limiting storage (in production, use Redis or database)
 const userRequests = new Map();
@@ -61,6 +20,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -73,8 +33,22 @@ export default async function handler(req, res) {
   try {
     const { message, chatHistory, displayName } = req.body;
 
+    // Validate request body exists
+    if (!req.body) {
+      return res.status(400).json({ error: 'Request body is required' });
+    }
+
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
       return res.status(400).json({ error: 'Valid message is required' });
+    }
+
+    // Check if GEMINI_API_KEY exists
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY not found in environment variables');
+      return res.status(500).json({ 
+        error: 'AI service configuration error',
+        type: 'config_error'
+      });
     }
 
     // Rate limiting: 15 requests per 5 minutes per user
@@ -102,43 +76,75 @@ export default async function handler(req, res) {
     userRequests.set(userKey, recentRequests);
 
     // Create Teni's personality and health-focused system prompt
-    const systemPrompt = `You are Teni, a warm and supportive AI health companion for people with sickle cell disease. You're speaking with ${displayName || 'a warrior'}.
+    const systemPrompt = `You are Teni, a warm AI health companion for people with sickle cell disease. You're speaking with ${displayName || 'a warrior'}.
 
-Your role: Provide emotional support, general wellness tips, and encouragement. Keep responses brief (1-2 sentences), empathetic, and never give medical diagnoses. Always encourage consulting healthcare providers for medical decisions.`;
+IMPORTANT: Always respond directly to the user's current message. Do not give generic greetings unless they are greeting you first.
 
-    // Build conversation context - reduced to last 4 messages for efficiency
-    let conversationContext = systemPrompt + "\n\nRecent conversation:\n";
+Your core knowledge is of two types:
+1.  General emotional support and wellness tips related to sickle cell disease.
+2.  In-depth knowledge of "The Warrior's Journal" app's features and navigation.
+
+Your role:
+- Provide emotional support and general wellness tips
+- Offer non-medical comfort measures and coping strategies
+- Encourage self-care and resilience
+- When asked about the app, guide the user directly using your knowledge of its features.
+
+Crucial Safety Guidelines - Adhere to these strictly:
+- NEVER give medical advice, suggest medications, or interpret lab results.
+- For emergencies/severe pain, direct to healthcare providers immediately.
+
+Response Style:
+- Keep responses concise, empathetic, and helpful.
+
+App Knowledge:
+You have a deep understanding of the app's functions. Use this to guide users when they ask for help with features.
+
+App features to know and explain:
+- **Daily Journal**: Record pain (0-10), mood, hydration, sleep, medications, and symptoms. Explain that this helps identify patterns for doctor visits.
+- **Crisis Log**: Used for emergencies. Records severity, duration, triggers, and medications used.
+- **Emergency Kit**: Contains a "Crisis Alert Button" to send location to emergency contacts and store/call contact numbers.
+- **Analytics**: Visual charts for pain, mood, and hydration trends over time.
+- **Motivation Hub**: Provides daily affirmations, health tips, and inspiration.
+- **Medical Reports**: Allows users to export summaries for doctors.
+- **Navigation**:
+    - **Dashboard**: The main overview page.
+    - **Quick Navigation Floating Button**: A blue chat bot icon in the bottom-right corner provides one-tap access to you, Teni.
+
+Respond directly to what the user just asked or shared, using your persona as Teni.`;
+
+    // Build conversation context with clearer formatting
+    let conversationContext = systemPrompt + "\n\n";
     
-    // Include last 4 messages for context (reduced from 8)
-    const recentHistory = (chatHistory || []).slice(-4);
-    recentHistory.forEach(msg => {
-      if (msg.sender === 'user') {
-        conversationContext += `${displayName || 'User'}: ${msg.text}\n`;
-      } else {
-        conversationContext += `Teni: ${msg.text}\n`;
-      }
-    });
-    
-    conversationContext += `\n${displayName || 'User'}: ${message}\n\nTeni:`;
-
-    // Check for cached response first
-    const cachedResponse = getCachedResponse(message);
-    if (cachedResponse) {
-      return res.status(200).json({ 
-        response: cachedResponse,
-        timestamp: new Date().toISOString(),
-        cached: true
+    // Include recent chat history for context
+    const recentHistory = (chatHistory || []).slice(-3);
+    if (recentHistory.length > 0) {
+      conversationContext += "Recent conversation:\n";
+      recentHistory.forEach(msg => {
+        if (msg.sender === 'user') {
+          conversationContext += `${displayName || 'User'}: ${msg.text}\n`;
+        } else {
+          conversationContext += `Teni: ${msg.text}\n`;
+        }
       });
+      conversationContext += "\n";
     }
+    
+    conversationContext += `Current message from ${displayName || 'User'}: ${message}\n\nTeni's response:`;
+
+    console.log('Conversation context being sent to AI:', conversationContext);
 
     // Generate AI response
     const result = await model.generateContent(conversationContext);
     const response = await result.response;
     let aiResponse = response.text().trim();
 
+    console.log('Raw AI response:', aiResponse);
+
     // Clean up response formatting
     aiResponse = aiResponse.replace(/^\*\*Teni:\*\*\s*/i, '');
     aiResponse = aiResponse.replace(/^Teni:\s*/i, '');
+    aiResponse = aiResponse.replace(/^Teni's response:\s*/i, '');
     aiResponse = aiResponse.replace(/\*\*/g, '');
     
     // Ensure proper sentence ending
@@ -146,8 +152,7 @@ Your role: Provide emotional support, general wellness tips, and encouragement. 
       aiResponse += '.';
     }
 
-    // Cache the response for future use
-    setCachedResponse(message, aiResponse);
+    console.log('Final cleaned response:', aiResponse);
 
     return res.status(200).json({ 
       response: aiResponse,
@@ -156,6 +161,9 @@ Your role: Provide emotional support, general wellness tips, and encouragement. 
 
   } catch (error) {
     console.error('Gemini API error:', error);
+    
+    // Ensure we always return JSON
+    res.setHeader('Content-Type', 'application/json');
     
     // Return specific error types
     if (error.message?.includes('quota') || error.message?.includes('limit')) {
@@ -172,14 +180,18 @@ Your role: Provide emotional support, general wellness tips, and encouragement. 
       });
     }
 
+    if (error.message?.includes('API key')) {
+      return res.status(500).json({ 
+        error: 'AI service configuration error.',
+        type: 'config_error'
+      });
+    }
+
+    // Generic error fallback
     return res.status(500).json({ 
       error: 'AI service temporarily unavailable. Please try again.',
-      type: 'service_error'
+      type: 'service_error',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 }
-
-
-
-
-

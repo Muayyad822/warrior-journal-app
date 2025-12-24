@@ -58,12 +58,36 @@ function AIChat() {
         }),
       });
 
+      // Check if response is ok before parsing JSON
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            errorData = await response.json();
+          } catch (jsonError) {
+            console.error('Failed to parse error JSON:', jsonError);
+            throw new Error(`HTTP ${response.status}: Server returned non-JSON error`);
+          }
+        } else {
+          // Server returned HTML or other non-JSON content
+          const textResponse = await response.text();
+          console.error('Non-JSON response:', textResponse);
+          throw new Error(`HTTP ${response.status}: Server error`);
+        }
+        
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
 
-      const data = await response.json();
+      // Parse successful JSON response
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error('Failed to parse success JSON:', jsonError);
+        throw new Error('Server returned invalid JSON response');
+      }
       
       const aiMessage = {
         sender: 'ai',
@@ -85,6 +109,8 @@ function AIChat() {
         toast.error('Message blocked. Please rephrase your question.');
       } else if (error.message.includes('Failed to fetch')) {
         toast.error('Connection error. Please check your internet and try again.');
+      } else if (error.message.includes('JSON')) {
+        toast.error('Server communication error. Please try again.');
       } else {
         toast.error('AI service unavailable. Please try again later.');
       }
@@ -119,21 +145,33 @@ function AIChat() {
       <div className="fixed bottom-4 right-4 z-50">
         <button
           onClick={() => setIsMinimized(false)}
-          className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-105 w-16 h-16 flex items-center justify-center"
-          aria-label="Open chat with Teni"
+          className="bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl transition-all duration-300 hover:scale-105 
+                     w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 
+                     flex items-center justify-center
+                     hover:animate-none
+                     ring-4 ring-blue-200 ring-opacity-50
+                     focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-75"
+          aria-label="Open chat with Teni, your health companion"
+          aria-describedby="chat-button-description"
         >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 sm:w-10 sm:h-10 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
+          <span id="chat-button-description" className="sr-only">
+            Click to open chat with Teni for health support and guidance
+          </span>
         </button>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-4 right-4 w-80 sm:w-96 lg:w-[420px] h-96 sm:h-[500px] lg:h-[600px] bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col z-50">
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:w-96 lg:w-[420px] 
+                    h-[calc(100vh-120px)] sm:h-[500px] lg:h-[600px] 
+                    bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col z-50
+                    max-h-[600px]">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center">
+      <div className="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center flex-shrink-0">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-bold">
             T
@@ -144,21 +182,14 @@ function AIChat() {
           </div>
         </div>
         <div className="flex space-x-2">
-          {/* <button
-            onClick={clearChat}
-            className="text-blue-100 hover:text-white transition-colors"
-            title="Clear chat"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button> */}
           <button
             onClick={() => setIsMinimized(true)}
-            className="text-blue-100 hover:text-white transition-colors"
+            className="text-blue-100 hover:text-white transition-colors p-2 rounded-full hover:bg-blue-500
+                       focus:outline-none focus:ring-2 focus:ring-blue-300"
             title="Minimize chat"
+            aria-label="Minimize chat window"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
             </svg>
           </button>
@@ -166,14 +197,14 @@ function AIChat() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
         {chatHistory.map((message, index) => (
           <div
             key={index}
             className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
+              className={`max-w-[85%] sm:max-w-xs px-3 py-2 rounded-lg text-sm ${
                 message.sender === 'user'
                   ? 'bg-blue-600 text-white'
                   : message.isError
@@ -202,7 +233,7 @@ function AIChat() {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 flex-shrink-0">
         <div className="flex space-x-2">
           <input
             ref={inputRef}
@@ -211,15 +242,19 @@ function AIChat() {
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask Teni about your health..."
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+            className="flex-1 px-3 py-3 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             disabled={isLoading}
+            aria-label="Type your message to Teni"
           />
           <button
             onClick={handleSendMessage}
             disabled={!inputText.trim() || isLoading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-3 py-2 rounded-md transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-3 sm:py-2 rounded-md transition-colors
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                       min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Send message to Teni"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
           </button>

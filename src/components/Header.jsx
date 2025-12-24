@@ -58,7 +58,6 @@ function Header() {
   return (
     <>
       <header className="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-40">
- 
         <div className="container mx-auto flex justify-between items-center">
           {/* App Title/Logo */}
           <Link to="/dashboard" className="text-2xl font-bold">
@@ -72,6 +71,7 @@ function Header() {
             <Link to="/crisis-log" className="hover:text-blue-200">Crisis Log</Link>
             <Link to="/analytics" className="hover:text-blue-200">Analytics</Link>
             <Link to="/motivation" className="hover:text-blue-200">Motivation</Link>
+            <Link to="/guide" className="hover:text-blue-200">How to use app</Link>
           </nav>
 
           {/* User Greeting & Name Edit */}
@@ -188,6 +188,13 @@ function Header() {
                   onClick={closeMobileMenu}
                 >
                   Motivation
+                </Link>
+                <Link 
+                  to="/guide" 
+                  className="hover:text-blue-200 hover:bg-blue-700 py-3 px-3 rounded transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  How to use app
                 </Link>
               </nav>
               
