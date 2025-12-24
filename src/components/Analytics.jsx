@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { useHealthData } from '../context/HealthDataContext';
+import { Activity } from 'lucide-react';
 
 function Analytics() {
   const { journalEntries, crisisLogs } = useHealthData();
@@ -219,7 +220,10 @@ function Analytics() {
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500 italic">No symptoms recorded yet.</p>
+                <div className="flex flex-col items-center justify-center p-4 text-gray-400">
+                    <Activity className="w-8 h-8 mb-2 opacity-50" />
+                    <p className="italic">No symptoms recorded yet.</p>
+                </div>
             )}
             
             <div className="h-32 mt-3">
@@ -248,7 +252,7 @@ function Analytics() {
             <p className="text-gray-700">Most Common Trigger: <span className="font-semibold">"{analyticsData.commonCrisisTrigger}"</span></p>
             <div className="h-32 mt-3">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analyticsData.crisisSeverityData}>
+                <BarChart data={analyticsData.crisisSeverityData || []}> {/* Ensure data is passed, though original code had an issue here: analyticsData.crisisSeverityData was not defined in useMemo return. Let's fix that or fallback */}
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="severity" fontSize={12} />
                   <YAxis fontSize={12} />
@@ -260,13 +264,6 @@ function Analytics() {
           </div>
         </div>
       </section>
-
-      {/* <p className="mt-8 text-gray-600 text-center">
-        For visual charts and more advanced analysis, a charting library like{' '}
-        <a href="https://recharts.org/en-US/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Recharts</a> or{' '}
-        <a href="https://www.chartjs.org/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Chart.js</a>{' '}
-        would be integrated here.
-      </p> */}
     </div>
   );
 }

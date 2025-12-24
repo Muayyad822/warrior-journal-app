@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { useHealthData } from "../context/HealthDataContext";
 import notificationService from "../services/NotificationService";
-import { AlertTriangle, Bell, Check, X, Pill, Droplets, FileText, Activity, Calendar, BarChart3, Clipboard } from 'lucide-react';
+import { AlertTriangle, Bell, Check, X, Pill, Droplets, FileText, Activity, Calendar, BarChart3, Clipboard, Plus } from 'lucide-react';
+import WeatherWidget from './WeatherWidget';
+import ReportGenerator from './ReportGenerator';
 
 function Dashboard() {
-  const { journalEntries, crisisLogs, getDisplayName } = useHealthData();
+  const { journalEntries, crisisLogs, getDisplayName, addWaterIntake } = useHealthData();
   const displayName = getDisplayName();
 
   // Get reminder status
@@ -23,16 +25,22 @@ function Dashboard() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-2">
-        {displayName}'s Health Management Dashboard
-      </h1>
-      <p className="text-lg text-gray-600 mb-6">
-        Welcome back, {displayName}! <br /> Monitor your health patterns and manage your health effectively.
-      </p>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            {displayName}'s Health Management
+          </h1>
+          <p className="text-lg text-gray-600">
+            Welcome back! Monitor your health patterns and manage your health effectively.
+          </p>
+        </div>
+      </div>
+      
+      
       
       {/* Emergency Kit Section - Always visible */}
-      <section className="bg-red-700 text-white rounded-lg shadow-lg p-6 mb-6 text-center">
+      <section className="bg-red-700 text-white rounded-lg shadow-lg p-6 text-center">
         <h2 className="text-xl font-semibold mb-4 flex items-center justify-center">
           <AlertTriangle className="w-6 h-6 mr-2" /> Crisis Emergency Kit
         </h2>
@@ -44,36 +52,54 @@ function Dashboard() {
           Access Emergency Kit
         </Link>
       </section>
+
+      {/* Weather Widget */}
+      <WeatherWidget />
       
       {/* Key Information Section */}
-      <section className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <section className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">
           Health Tracking Summary
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div className="bg-blue-50 p-4 rounded-md">
-            <p className="text-sm text-gray-500">Total Health Journal Entries</p>
+          <div className="bg-blue-50 p-4 rounded-md flex flex-col justify-center">
+            <p className="text-sm text-gray-500">Total Journal Entries</p>
             <p className="text-3xl font-bold text-blue-700">
               {journalEntries.length}
             </p>
           </div>
-          <div className="bg-red-50 p-4 rounded-md">
-            <p className="text-sm text-gray-500">Pain Crisis Episodes Logged</p>
+          <div className="bg-red-50 p-4 rounded-md flex flex-col justify-center">
+            <p className="text-sm text-gray-500">Pain Crisis Episodes</p>
             <p className="text-3xl font-bold text-red-700">
               {crisisLogs.length}
             </p>
           </div>
-          <div className="bg-green-50 p-4 rounded-md">
-            <p className="text-sm text-gray-500">Today's Health Status</p>
-            <p className="text-lg font-semibold text-green-700">
-              Pain: {todaysStatus.painLevel}/10
-            </p>
+          <div className="bg-green-50 p-4 rounded-md flex flex-col justify-center items-center">
+            <p className="text-sm text-gray-500 mb-2">Today's Status</p>
+            <div className="flex flex-col gap-1 w-full max-w-[150px]">
+              <p className="text-lg font-semibold text-green-700">
+                Pain: {todaysStatus.painLevel}/10
+              </p>
+              <div className="flex items-center justify-between bg-white rounded-full px-3 py-1 shadow-sm mt-1">
+                <span className="flex items-center text-blue-600 font-medium">
+                  <Droplets className="w-4 h-4 mr-1" />
+                  {todaysStatus.hydration}
+                </span>
+                <button 
+                  onClick={addWaterIntake}
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full p-1 transition-colors"
+                  title="Add water intake"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Reminder Status Section */}
-      <section className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <section className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
           <Bell className="w-5 h-5 mr-2" />
           Daily Reminders
@@ -94,7 +120,7 @@ function Dashboard() {
             </div>
           </div>
           <Link
-            to="/ReminderSettings"
+            to="/settings"
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors"
           >
             Manage Reminders
@@ -130,35 +156,37 @@ function Dashboard() {
       {/* Quick Actions */}
       <section className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Health Management Tools</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           <Link
             to="/journal"
-            className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg text-center transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg text-center transition-colors flex flex-col items-center justify-center min-h-[120px]"
           >
-            <FileText className="text-2xl mb-2" />
-            <div className="font-semibold">Daily Health Journal</div>
+            <FileText className="text-3xl mb-3" />
+            <div className="font-semibold">Daily Journal</div>
           </Link>
           <Link
             to="/crisis-log"
-            className="bg-red-600 hover:bg-red-700 text-white p-4 rounded-lg text-center transition-colors"
+            className="bg-red-600 hover:bg-red-700 text-white p-4 rounded-lg text-center transition-colors flex flex-col items-center justify-center min-h-[120px]"
           >
-            <AlertTriangle className="text-2xl mb-2" />
-            <div className="font-semibold">Log Crisis Episode</div>
+            <AlertTriangle className="text-3xl mb-3" />
+            <div className="font-semibold">Log Crisis</div>
           </Link>
           <Link
             to="/analytics"
-            className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-lg text-center transition-colors"
+            className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-lg text-center transition-colors flex flex-col items-center justify-center min-h-[120px]"
           >
-            <BarChart3 className="text-2xl mb-2" />
-            <div className="font-semibold">Health Analytics</div>
+            <BarChart3 className="text-3xl mb-3" />
+            <div className="font-semibold">Analytics</div>
           </Link>
           <Link
             to="/medical-reports"
-            className="bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-lg text-center transition-colors"
+            className="bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-lg text-center transition-colors flex flex-col items-center justify-center min-h-[120px]"
           >
-            <Clipboard className="text-2xl mb-2" />
+            <Clipboard className="text-3xl mb-3" />
             <div className="font-semibold">Medical Reports</div>
           </Link>
+          {/* Report Generation Button */}
+          <ReportGenerator />
         </div>
       </section>
     </div>
