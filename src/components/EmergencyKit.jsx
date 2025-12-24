@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useHealthData } from '../context/HealthDataContext';
+import { AlertTriangle, Phone, Pencil, X } from 'lucide-react';
 
 function EmergencyKit() {
   const { addCrisisLog, crisisActionPlan, updateCrisisActionPlan, emergencyContacts, addEmergencyContact, updateEmergencyContact, deleteEmergencyContact } = useHealthData();
@@ -250,7 +251,7 @@ This is an automated emergency alert from my health app.`;
               : 'bg-red-500 hover:bg-red-600'
           } text-white font-bold py-4 px-8 rounded-full shadow-xl transition-colors focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-offset-2 flex items-center justify-center mx-auto space-x-3 text-xl`}
         >
-          <span>{isGettingLocation ? 'Getting Location...' : '🆘 CRISIS ALERT - Send Location'}</span>
+          <span>{isGettingLocation ? 'Getting Location...' : <><AlertTriangle className="w-6 h-6 mr-2" /> CRISIS ALERT - Send Location</>}</span>
         </button>
         <p className="mt-4 text-sm opacity-80">
           Sends your location with emergency contacts via WhatsApp or SMS. <br />
@@ -321,7 +322,7 @@ This is an automated emergency alert from my health app.`;
                   >
                     <span className="font-medium text-gray-800">{contact.name}</span>
                     <span className={`font-medium ${contact.phone ? 'text-blue-600' : 'text-gray-500 italic'}`}>
-                      📞 {contact.phone || 'Add Number'}
+                      <Phone className="w-4 h-4 mr-1" /> {contact.phone || 'Add Number'}
                     </span>
                   </button>
                   <div className="flex items-center gap-2 ml-3">
@@ -330,14 +331,14 @@ This is an automated emergency alert from my health app.`;
                       className="text-blue-500 hover:text-blue-700 text-sm p-1 rounded-full hover:bg-blue-50"
                       title="Edit Contact"
                     >
-                      ✏️
+                      <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => removeContact(contact.id)}
                       className="text-red-500 hover:text-red-700 text-sm p-1 rounded-full hover:bg-red-50"
                       title="Remove Contact"
                     >
-                      ✕
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

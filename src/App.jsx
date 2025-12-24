@@ -15,6 +15,9 @@ import OnboardingWelcome from './components/OnboardingWelcome';
 import { HealthDataProvider, useHealthData } from './context/HealthDataContext';
 import Footer from './components/Footer';
 import AIChat from './components/AIChat';
+import ReminderSettings from './components/ReminderSettings';
+import notificationService from './services/NotificationService';
+import { useEffect } from 'react';
 
 import { Analytics } from "@vercel/analytics/react"
 
@@ -66,7 +69,7 @@ const AppContent = () => {
   return (
     <div className="min-h-screen bg-gray-100 font-sans flex flex-col">
       <Header />
-      <main className="flex-grow container mx-auto p-4">
+      <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -76,6 +79,7 @@ const AppContent = () => {
           <Route path="/motivation" element={<Motivation />} />
           <Route path="/medical-reports" element={<MedicalReports />} />
           <Route path="/emergency-kit" element={<EmergencyKit />} />
+          <Route path="/ReminderSettings" element={<ReminderSettings />} />
         </Routes>
       </main>
       {/* <FloatingActionButton /> */}
@@ -112,6 +116,11 @@ const AppContent = () => {
 };
 
 function App() {
+  // Initialize notification service when app starts
+  useEffect(() => {
+    notificationService.restoreReminders();
+  }, []);
+
   return (
     <HealthDataProvider>
       <AppContent />
