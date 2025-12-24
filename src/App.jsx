@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
 import FloatingActionButton from './components/FloatingActionButton';
+import NotificationService from './services/NotificationService';
 import Dashboard from './components/Dashboard';
 import Journal from './components/Journal';
 import CrisisLog from './components/CrisisLog';
@@ -18,6 +20,7 @@ import AIChat from './components/AIChat';
 import GuidePage from './components/Guide';
 
 import { Analytics } from "@vercel/analytics/react"
+import notificationService from './services/NotificationService';
 
 
 const Home = () => {
