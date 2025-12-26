@@ -5,19 +5,29 @@ class NotificationService {
     this.registration = null;
     this.reminders = new Map();
     this.reminderConfigs = new Map(); // Store reminder configurations
-    this.init();
+    this.initialized = false;
   }
 
   async init() {
+    if (this.initialized) return;
+    
     // Check if service worker and notifications are supported
-    if ('serviceWorker' in navigator && 'Notification' in window) {
-      try {
-        this.registration = await navigator.serviceWorker.ready;
-        this.permission = Notification.permission;
-      } catch (error) {
-        console.error('Service worker registration failed:', error);
+    if ('Notification' in window) {
+      this.permission = Notification.permission;
+      
+      if ('serviceWorker' in navigator) {
+        try {
+          // Wait for service worker to be ready, but don't block indefinitely
+          this.registration = await navigator.serviceWorker.ready.catch(e => {
+            console.warn('Service worker ready failed, falling back to non-SW notifications', e);
+            return null;
+          });
+        } catch (error) {
+          console.error('Service worker registration failed:', error);
+        }
       }
     }
+    this.initialized = true;
   }
 
   async requestPermission() {
@@ -30,21 +40,27 @@ class NotificationService {
       return true;
     }
 
-    if (this.permission !== 'denied') {
+    try {
       const permission = await Notification.requestPermission();
       this.permission = permission;
       return permission === 'granted';
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+      return false;
     }
-
-    return false;
   }
 
   async showNotification(title, options = {}) {
-    const hasPermission = await this.requestPermission();
+    await this.init();
     
-    if (!hasPermission) {
-      console.log('Notification permission not granted');
-      return false;
+    if (this.permission !== 'granted') {
+      // Don't auto-request permission largely to avoid blocking, 
+      // but if called explicitly, it might be okay. 
+      // Better to check permission before calling this.
+      if (Notification.permission !== 'granted') {
+          console.log('Notification permission not granted');
+          return false;
+      }
     }
 
     const defaultOptions = {
@@ -57,13 +73,35 @@ class NotificationService {
 
     const notificationOptions = { ...defaultOptions, ...options };
 
-    if (this.registration && this.registration.showNotification) {
-      // Use service worker notification (persistent)
-      return this.registration.showNotification(title, notificationOptions);
-    } else {
-      // Fallback to regular notification
-      return new Notification(title, notificationOptions);
+    try {
+      if (this.registration && this.registration.showNotification) {
+        // Use service worker notification (persistent)
+        await this.registration.showNotification(title, notificationOptions);
+        return true;
+      } else {
+        // Fallback to regular notification
+        const notification = new Notification(title, notificationOptions);
+        return true;
+      }
+    } catch (error) {
+      console.error('Error showing notification:', error);
+      // Last ditch effort: classic Notification
+      try {
+         new Notification(title, notificationOptions);
+         return true;
+      } catch (e) {
+         console.error('Fallback notification failed', e);
+         return false;
+      }
     }
+  }
+
+  async testNotification() {
+    await this.requestPermission();
+    return this.showNotification('Test Reminder', {
+      body: 'Great! Notifications are working correctly.',
+      tag: 'test-notification'
+    });
   }
 
   scheduleDailyReminder(id, time, title, body) {
@@ -74,7 +112,7 @@ class NotificationService {
       const now = new Date();
       const [hours, minutes] = time.split(':');
       const scheduledTime = new Date();
-      scheduledTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      scheduledTime.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
 
       // If the time has passed today, schedule for tomorrow
       if (scheduledTime <= now) {
@@ -82,6 +120,15 @@ class NotificationService {
       }
 
       const delay = scheduledTime.getTime() - now.getTime();
+      
+      // Safety check for delay (max 32-bit int)
+      if (delay > 2147483647) {
+        // If delay is too long for setTimeout, check again in an hour
+        const hourDelay = 3600000;
+        const timeoutId = setTimeout(() => scheduleNext(), hourDelay);
+        this.reminders.set(id, timeoutId);
+        return;
+      }
 
       const timeoutId = setTimeout(async () => {
         await this.showNotification(title, { body });
@@ -90,16 +137,6 @@ class NotificationService {
       }, delay);
 
       this.reminders.set(id, timeoutId);
-      
-      // Store reminder info in localStorage for persistence
-      const reminderData = {
-        id,
-        time,
-        title,
-        body,
-        nextScheduled: scheduledTime.toISOString()
-      };
-      localStorage.setItem(`reminder_${id}`, JSON.stringify(reminderData));
     };
 
     scheduleNext();
@@ -128,25 +165,31 @@ class NotificationService {
     if (this.reminders.has(id)) {
       clearTimeout(this.reminders.get(id));
       this.reminders.delete(id);
-      localStorage.removeItem(`reminder_${id}`);
     }
   }
 
   clearAllReminders() {
     this.reminders.forEach((timeoutId, id) => {
       clearTimeout(timeoutId);
-      localStorage.removeItem(`reminder_${id}`);
     });
     this.reminders.clear();
+    // Do not clear localStorage configs here as this might be called on unmount
+    // Only delete configs if explicitly asked
   }
 
   // Restore reminders after app restart
-  restoreReminders() {
+  async restoreReminders() {
+    await this.init();
     const keys = Object.keys(localStorage).filter(key => key.startsWith('reminder_'));
+
+    if (keys.length === 0) return;
 
     keys.forEach(key => {
       try {
         const reminderData = JSON.parse(localStorage.getItem(key));
+        // Handle potential malformed data
+        if (!reminderData || !reminderData.id) return;
+        
         const { id, time, title, body, type, enabled } = reminderData;
 
         // Store configuration
@@ -158,7 +201,7 @@ class NotificationService {
         }
       } catch (error) {
         console.error('Error restoring reminder:', error);
-        localStorage.removeItem(key);
+        // Don't delete merely on error to prevent data loss on bugs
       }
     });
   }
@@ -190,7 +233,7 @@ class NotificationService {
     localStorage.setItem(`reminder_${id}`, JSON.stringify(updatedConfig));
 
     // Re-schedule if time changed or enabled status changed
-    if (updates.time || updates.enabled !== undefined) {
+    if (updates.time || updates.enabled !== undefined || updates.title || updates.body) {
       this.clearReminder(id);
       if (updatedConfig.enabled) {
         this.scheduleDailyReminder(id, updatedConfig.time, updatedConfig.title, updatedConfig.body);
@@ -229,7 +272,7 @@ class NotificationService {
 
   // Check if notifications are supported
   isSupported() {
-    return 'Notification' in window && 'serviceWorker' in navigator;
+    return 'Notification' in window;
   }
 
   // Get notification options based on reminder type
@@ -247,10 +290,6 @@ class NotificationService {
         ...baseOptions,
         tag: 'warrior-medication',
         requireInteraction: true,
-        actions: [
-          { action: 'taken', title: 'Mark as Taken' },
-          { action: 'snooze', title: 'Remind Later' }
-        ]
       },
       water: {
         ...baseOptions,

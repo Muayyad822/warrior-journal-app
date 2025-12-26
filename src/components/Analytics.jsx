@@ -113,6 +113,17 @@ function Analytics() {
 
     const symptomChartData = countSymptomOccurrences(journalEntries).slice(0, 5);
 
+    const crisisSeverityData = Array.from({ length: 11 }, (_, i) => ({
+      severity: i,
+      count: 0
+    }));
+    crisisLogs.forEach(log => {
+      const severity = parseInt(log.severity);
+      if (!isNaN(severity) && severity >= 0 && severity <= 10) {
+        crisisSeverityData[severity].count++;
+      }
+    });
+
     return {
       totalJournalEntries: journalEntries.length,
       totalCrisisLogs: crisisLogs.length,
@@ -127,7 +138,8 @@ function Analytics() {
       avgHydration: journalEntries.length > 0 ? (journalEntries.reduce((sum, entry) => sum + (entry.hydration || 0), 0) / journalEntries.length).toFixed(1) : 'N/A',
       painTrendData,
       moodChartData,
-      symptomChartData
+      symptomChartData,
+      crisisSeverityData
     };
   }, [journalEntries, crisisLogs]); // Recalculate if journalEntries or crisisLogs change
 
@@ -139,125 +151,168 @@ function Analytics() {
       <p className="mb-6 text-gray-600">Gain insights into your health journey through data summaries.</p>
 
       {/* Overview Statistics */}
-      <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Overall Summary</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
-          <div className="bg-blue-50 p-4 rounded-md">
-            <p className="text-sm text-gray-500">Total Journal Entries</p>
-            <p className="text-3xl font-bold text-blue-700">{analyticsData.totalJournalEntries}</p>
+      <section className="glass-card p-6 mb-8">
+        <h3 className="text-xl font-bold text-slate-700 mb-4">Overall Summary</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+          <div className="bg-primary-50/50 p-4 rounded-2xl border border-primary-100">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Journal Entries</p>
+            <p className="text-3xl font-bold text-primary-600 mt-1">{analyticsData.totalJournalEntries}</p>
           </div>
-          <div className="bg-red-50 p-4 rounded-md">
-            <p className="text-sm text-gray-500">Total Crisis Logs</p>
-            <p className="text-3xl font-bold text-red-700">{analyticsData.totalCrisisLogs}</p>
+          <div className="bg-rose-50/50 p-4 rounded-2xl border border-rose-100">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Crisis Logs</p>
+            <p className="text-3xl font-bold text-rose-600 mt-1">{analyticsData.totalCrisisLogs}</p>
           </div>
-          <div className="bg-green-50 p-4 rounded-md">
-            <p className="text-sm text-gray-500">Average Sleep (All Time)</p>
-            <p className="text-3xl font-bold text-green-700">{analyticsData.avgSleepHours} hrs</p>
+          <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Sleep</p>
+            <p className="text-3xl font-bold text-emerald-600 mt-1">{analyticsData.avgSleepHours} <span className="text-sm font-medium text-slate-400">hrs</span></p>
           </div>
-          <div className="bg-purple-50 p-4 rounded-md">
-            <p className="text-sm text-gray-500">Average Hydration (All Time)</p>
-            <p className="text-3xl font-bold text-purple-700">{analyticsData.avgHydration} glasses</p>
+          <div className="bg-violet-50/50 p-4 rounded-2xl border border-violet-100">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Hydration</p>
+            <p className="text-3xl font-bold text-violet-600 mt-1">{analyticsData.avgHydration} <span className="text-sm font-medium text-slate-400">cups</span></p>
           </div>
         </div>
       </section>
 
       {/* Journal Entry Trends */}
-      <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Journal Entry Trends</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="glass-card p-6 mb-8">
+        <h3 className="text-xl font-bold text-slate-700 mb-6">Journal Entry Trends</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h4 className="text-lg font-medium text-gray-800 mb-2">Pain Level Trends</h4>
-            <p className="text-gray-700">Average Pain (All Time): <span className="font-semibold">{analyticsData.avgPainAllTime}/10</span></p>
-            <p className="text-gray-700">Average Pain (Last 7 Days): <span className="font-semibold">{analyticsData.avgPainLast7Days}/10</span></p>
+            <h4 className="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+              <span className="w-2 h-6 bg-red-400 rounded-full mr-2"></span>
+              Pain Level Trends
+            </h4>
+            <div className="flex justify-between mb-4 text-sm">
+                <p className="text-slate-600">All Time Avg: <span className="font-bold text-slate-800">{analyticsData.avgPainAllTime}/10</span></p>
+                <p className="text-slate-600">Last 7 Days Avg: <span className="font-bold text-slate-800">{analyticsData.avgPainLast7Days}/10</span></p>
+            </div>
             
-            <div className="h-32 mt-3">
+            <div className="h-64 mt-3 bg-white/40 rounded-xl p-2 border border-slate-100">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={analyticsData.painTrendData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" fontSize={12} />
-                  <YAxis domain={[0, 10]} fontSize={12} />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="pain" stroke="#ef4444" strokeWidth={2} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="date" fontSize={11} tick={{fill: '#64748b'}} />
+                  <YAxis domain={[0, 10]} fontSize={11} tick={{fill: '#64748b'}} />
+                  <Tooltip contentStyle={{backgroundColor: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                  <Line type="monotone" dataKey="pain" stroke="#ef4444" strokeWidth={3} dot={{r: 4, fill: '#ef4444', strokeWidth: 0}} activeDot={{r: 6}} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
           
           <div>
-            <h4 className="text-lg font-medium text-gray-800 mb-2">Mood Trends</h4>
-            <p className="text-gray-700">Most Frequent Mood (All Time): <span className="font-semibold">"{analyticsData.mostFrequentMood}"</span></p>
-            <p className="text-gray-700">Most Frequent Mood (Last 7 Days): <span className="font-semibold">"{analyticsData.mostFrequentMoodLast7Days}"</span></p>
+            <h4 className="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                <span className="w-2 h-6 bg-indigo-400 rounded-full mr-2"></span>
+                Mood Trends
+            </h4>
+             <div className="flex justify-between mb-4 text-sm">
+                <p className="text-slate-600">All Time Mode: <span className="font-bold text-slate-800">{analyticsData.mostFrequentMood}</span></p>
+                <p className="text-slate-600">7 Days Mode: <span className="font-bold text-slate-800">{analyticsData.mostFrequentMoodLast7Days}</span></p>
+            </div>
             
-            <div className="h-48 mt-3">
+            <div className="h-64 mt-3 bg-white/40 rounded-xl p-2 border border-slate-100 flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={analyticsData.moodChartData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={60}
-                    fill="#8884d8"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
                     dataKey="count"
-                    label={({ mood }) => mood}
-                    labelLine={false}
                   >
                     {analyticsData.moodChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip contentStyle={{backgroundColor: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
+            <div className="flex flex-wrap justify-center gap-3 mt-2">
+                {analyticsData.moodChartData.slice(0, 5).map((entry, index) => (
+                    <div key={index} className="flex items-center text-xs text-slate-500">
+                        <span className="w-2 h-2 rounded-full mr-1" style={{backgroundColor: COLORS[index % COLORS.length]}}></span>
+                        {entry.mood}
+                    </div>
+                ))}
+            </div>
           </div>
           
-          <div>
-            <h4 className="text-lg font-medium text-gray-800 mb-2">Top Symptoms Recorded</h4>
-            {analyticsData.topSymptoms.length > 0 ? (
-              <ul className="list-disc list-inside text-gray-700">
-                {analyticsData.topSymptoms.map(symptom => (
-                  <li key={symptom.name} className="mb-1">{symptom.name} (<span className="font-semibold">{symptom.count}</span> times)</li>
-                ))}
-              </ul>
-            ) : (
-                <div className="flex flex-col items-center justify-center p-4 text-gray-400">
-                    <Activity className="w-8 h-8 mb-2 opacity-50" />
-                    <p className="italic">No symptoms recorded yet.</p>
+          <div className="md:col-span-2">
+            <h4 className="text-lg font-semibold text-slate-700 mb-3 flex items-center">
+                <span className="w-2 h-6 bg-amber-400 rounded-full mr-2"></span>
+                Top Symptoms Recorded
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white/40 rounded-xl p-4 border border-slate-100">
+                     {analyticsData.topSymptoms.length > 0 ? (
+                        <div className="space-y-3">
+                            {analyticsData.topSymptoms.map((symptom, idx) => (
+                            <div key={symptom.name} className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <span className="w-6 h-6 flex items-center justify-center bg-slate-100 rounded-full text-xs font-bold text-slate-500 mr-3">{idx + 1}</span>
+                                    <span className="text-slate-700 font-medium">{symptom.name}</span>
+                                </div>
+                                <span className="text-sm bg-slate-100 px-2 py-1 rounded-md text-slate-600 font-semibold">{symptom.count} times</span>
+                            </div>
+                            ))}
+                        </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center p-8 text-slate-400">
+                                <Activity className="w-10 h-10 mb-2 opacity-50" />
+                                <p className="italic">No symptoms recorded yet.</p>
+                            </div>
+                        )}
                 </div>
-            )}
-            
-            <div className="h-32 mt-3">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analyticsData.symptomChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" fontSize={12} />
-                  <YAxis fontSize={12} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
+                <div className="h-52 bg-white/40 rounded-xl p-2 border border-slate-100">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={analyticsData.symptomChartData} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e2e8f0" />
+                      <XAxis type="number" fontSize={11} hide />
+                      <YAxis dataKey="name" type="category" width={100} fontSize={11} tick={{fill: '#64748b'}} />
+                      <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{backgroundColor: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                      <Bar dataKey="count" fill="#8884d8" radius={[0, 4, 4, 0]} barSize={20} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Crisis Log Analysis */}
-      <section className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Crisis Log Analysis</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="glass-card p-6">
+        <h3 className="text-xl font-bold text-slate-700 mb-6">Crisis Log Analysis</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-            <h4 className="text-lg font-medium text-gray-800 mb-2">Crisis Overview</h4>
-            <p className="text-gray-700">Total Crisis Episodes: <span className="font-semibold">{analyticsData.totalCrisisLogs}</span></p>
-            <p className="text-gray-700">Average Crisis Severity: <span className="font-semibold">{analyticsData.avgCrisisSeverity}/10</span></p>
-            <p className="text-gray-700">Most Common Trigger: <span className="font-semibold">"{analyticsData.commonCrisisTrigger}"</span></p>
-            <div className="h-32 mt-3">
+            <h4 className="text-lg font-semibold text-slate-700 mb-4">Crisis Overview</h4>
+            <div className="space-y-4">
+                <div className="flex justify-between items-center p-4 bg-red-50/50 rounded-xl border border-red-100">
+                    <span className="text-slate-600">Total Episodes</span>
+                    <span className="text-2xl font-bold text-red-600">{analyticsData.totalCrisisLogs}</span>
+                </div>
+                <div className="flex justify-between items-center p-4 bg-orange-50/50 rounded-xl border border-orange-100">
+                    <span className="text-slate-600">Avg Severity</span>
+                    <span className="text-2xl font-bold text-orange-600">{analyticsData.avgCrisisSeverity}<span className="text-sm text-orange-400">/10</span></span>
+                </div>
+                 <div className="flex justify-between items-center p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                    <span className="text-slate-600">Common Trigger</span>
+                    <span className="text-lg font-bold text-slate-700">{analyticsData.commonCrisisTrigger || "N/A"}</span>
+                </div>
+            </div>
+          </div>
+          <div>
+            <h4 className="text-lg font-semibold text-slate-700 mb-4">Severity Distribution</h4>
+            <div className="h-48 bg-white/40 rounded-xl p-2 border border-slate-100">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={analyticsData.crisisSeverityData || []}> {/* Ensure data is passed, though original code had an issue here: analyticsData.crisisSeverityData was not defined in useMemo return. Let's fix that or fallback */}
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="severity" fontSize={12} />
-                  <YAxis fontSize={12} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#dc2626" />
+                <BarChart data={analyticsData.crisisSeverityData || []}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis dataKey="severity" fontSize={11} tick={{fill: '#64748b'}} />
+                  <YAxis fontSize={11} tick={{fill: '#64748b'}} />
+                  <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{backgroundColor: '#fff', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}} />
+                  <Bar dataKey="count" fill="#dc2626" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

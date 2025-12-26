@@ -41,7 +41,7 @@ function Dashboard() {
       
       {/* Emergency Kit Section - Always visible */}
       {/* Emergency Kit Section - Always visible */}
-      <section className="bg-gradient-to-r from-rose-600 to-rose-700 text-white rounded-3xl shadow-xl shadow-rose-500/20 p-8 text-center relative overflow-hidden">
+      <section className="bg-gradient-to-r from-rose-600 to-rose-700 text-white rounded-3xl shadow-xl shadow-rose-500/20 p-6 sm:p-8 text-center relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-white/5 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/20 to-transparent pointer-events-none"></div>
         <h2 className="text-2xl font-bold mb-4 flex items-center justify-center relative z-10">
           <AlertTriangle className="w-8 h-8 mr-3" /> Crisis Emergency Kit

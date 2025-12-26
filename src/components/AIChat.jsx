@@ -107,12 +107,14 @@ function AIChat() {
         toast.error('Please wait a moment before sending another message.');
       } else if (error.message.includes('safety')) {
         toast.error('Message blocked. Please rephrase your question.');
+      } else if (error.message.includes('configuration') || error.message.includes('config')) {
+        toast.error('AI Service not configured. Please check API Key.');
       } else if (error.message.includes('Failed to fetch')) {
         toast.error('Connection error. Please check your internet and try again.');
       } else if (error.message.includes('JSON')) {
         toast.error('Server communication error. Please try again.');
       } else {
-        toast.error('AI service unavailable. Please try again later.');
+        toast.error(error.message || 'AI service unavailable. Please try again later.');
       }
 
       // Add error message to chat
@@ -142,11 +144,11 @@ function AIChat() {
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-24 right-4 md:bottom-6 z-50 transition-all duration-300">
         <button
           onClick={() => setIsMinimized(false)}
           className="bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl transition-all duration-300 hover:scale-105 
-                     w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 
+                     w-14 h-14 sm:w-16 sm:h-16 md:w-16 md:h-16 
                      flex items-center justify-center
                      hover:animate-none
                      ring-4 ring-blue-200 ring-opacity-50
@@ -154,7 +156,7 @@ function AIChat() {
           aria-label="Open chat with Teni, your health companion"
           aria-describedby="chat-button-description"
         >
-          <svg className="w-8 h-8 sm:w-10 sm:h-10 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
           <span id="chat-button-description" className="sr-only">
@@ -166,10 +168,10 @@ function AIChat() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:w-96 lg:w-[420px] 
-                    h-[calc(100vh-120px)] sm:h-[500px] lg:h-[600px] 
-                    bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col z-50
-                    max-h-[600px]">
+    <div className="fixed bottom-24 right-4 left-4 md:bottom-4 sm:left-auto sm:w-96 lg:w-[420px] 
+                    h-[calc(100vh-180px)] sm:h-[500px] lg:h-[600px] 
+                    bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50
+                    max-h-[600px] transition-all duration-300">
       {/* Header */}
       <div className="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center flex-shrink-0">
         <div className="flex items-center space-x-2">

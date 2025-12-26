@@ -38,23 +38,23 @@ function Settings() {
   ];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">App Settings</h1>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-bold text-slate-800 mb-8">App Settings</h1>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Sidebar Navigation */}
         <div className="md:w-64 flex-shrink-0">
-          <nav className="space-y-1">
+          <nav className="flex md:flex-col overflow-x-auto md:overflow-visible gap-2 pb-4 md:pb-0 scrollbar-hide">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  className={`flex items-center whitespace-nowrap px-4 py-3 text-sm font-medium rounded-xl transition-all ${
                     activeTab === tab.id
-                      ? 'bg-primary-50 text-primary-700 shadow-sm'
-                      : 'text-slate-600 hover:bg-slate-50'
+                      ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
+                      : 'bg-white/40 text-slate-600 hover:bg-white/60 hover:text-slate-800 backdrop-blur-sm'
                   }`}
                 >
                   <Icon className="w-5 h-5 mr-3" />
@@ -69,36 +69,33 @@ function Settings() {
         <div className="flex-1 glass-card p-6 min-h-[400px]">
           {activeTab === 'profile' && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Profile Settings</h2>
+              <h2 className="text-xl font-bold text-slate-800 border-b border-slate-100 pb-4">Profile Settings</h2>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
-                <div className="flex max-w-md gap-2">
+                <label className="block text-sm font-medium text-slate-700 mb-2">Display Name</label>
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
-                    className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border p-2"
+                    className="glass-input flex-1 px-4 py-2.5"
+                    placeholder="Enter your name"
                   />
                   <button
                     onClick={handleSaveName}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+                    className="btn-primary flex items-center justify-center px-6 py-2.5"
                   >
                     <Save className="w-4 h-4 mr-2" /> Save
                   </button>
                 </div>
-                <p className="mt-2 text-sm text-gray-500">This name is used throughout the app to personalize your experience.</p>
+                <p className="mt-2 text-sm text-slate-500">This name is used throughout the app to personalize your experience.</p>
               </div>
             </div>
           )}
 
           {activeTab === 'notifications' && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 border-b pb-4 mb-4">Notification Preferences</h2>
-              {/* Embed existing component, but maybe we can strip its header if it has one, or just let it be. 
-                  ReminderSettings has its own container styling which might nest oddly. 
-                  Let's strip the container styling from ReminderSettings via CSS or just accept it.
-                  The user asked to "implement it", reusing is safest. */}
-              <div className="-m-4 sm:-m-6"> {/* Negative margin hack to offset ReminderSettings padding if needed, or just let it sit */}
+              <h2 className="text-xl font-bold text-slate-800 border-b border-slate-100 pb-4 mb-6">Notification Preferences</h2>
+              <div className="-mx-4 sm:-mx-6 -my-4">
                  <ReminderSettings />
               </div>
             </div>
@@ -106,40 +103,42 @@ function Settings() {
 
           {activeTab === 'data' && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Data Management</h2>
+              <h2 className="text-xl font-bold text-slate-800 border-b border-slate-100 pb-4">Data Management</h2>
               
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h3 className="text-lg font-medium text-red-800 mb-2">Danger Zone</h3>
-                <p className="text-red-600 text-sm mb-4">
+              <div className="bg-red-50/50 border border-red-100 rounded-xl p-5 backdrop-blur-sm">
+                <h3 className="text-lg font-bold text-red-700 mb-2">Danger Zone</h3>
+                <p className="text-red-600/80 text-sm mb-4">
                   This action will permanently delete all your journal entries, crisis logs, settings, and profile data from this device.
                 </p>
                 <button
                   onClick={handleClearData}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  className="inline-flex items-center px-4 py-2 border border-red-200 text-sm font-medium rounded-lg text-red-700 bg-red-100/50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                 >
                   <Trash2 className="w-4 h-4 mr-2" /> Clear All App Data
                 </button>
               </div>
               
               <div className="mt-4">
-                 <h3 className="text-lg font-medium text-gray-800 mb-2">Export Data</h3>
-                 <p className="text-gray-600 text-sm mb-3">You can export your health data to PDF in the Medical Reports section.</p>
+                 <h3 className="text-lg font-bold text-slate-800 mb-2">Export Data</h3>
+                 <p className="text-slate-600 text-sm mb-3">You can export your health data to PDF in the Medical Reports section.</p>
               </div>
             </div>
           )}
 
           {activeTab === 'about' && (
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">About App</h2>
-              <div className="prose text-gray-600">
-                <p><strong>The Warrior's Journal</strong> v1.0.0</p>
+              <h2 className="text-xl font-bold text-slate-800 border-b border-slate-100 pb-4">About App</h2>
+              <div className="prose text-slate-600">
+                <p><strong className="text-slate-800">The Warrior's Journal</strong> v1.0.0</p>
                 <p>A specialized health tracking companion for Sickle Cell Warriors.</p>
                 <p>
-                  Built with ❤️ by <a href="https://abdulmuizjimoh.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Muayyad</a>.
+                  Built with ❤️ by <a href="https://abdulmuizjimoh.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline font-medium">Muayyad</a>.
                 </p>
-                <p className="text-sm mt-4">
-                  Note: This application stores all data locally on your device. Clearing your browser cache may remove your data unless PWA persistence is active.
-                </p>
+                <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mt-4">
+                  <p className="text-sm text-blue-800">
+                    <strong>Note:</strong> This application stores all data locally on your device. Clearing your browser cache may remove your data unless PWA persistence is active.
+                  </p>
+                </div>
               </div>
             </div>
           )}

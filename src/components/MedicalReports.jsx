@@ -16,19 +16,20 @@ function MedicalReports() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto print:p-0">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 print:hidden">Medical Reports - Data for Your Doctor</h2>
-      <p className="mb-6 text-gray-600 print:hidden">Generate comprehensive reports of your health data for appointments and sharing.</p>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6 print:hidden">Medical Reports</h2>
+      <p className="mb-6 text-gray-600 print:hidden">
+        Generate a comprehensive PDF report of your health journey to share with your healthcare provider. 
+        You can also print this page directly.
+      </p>
 
-      <div className="mb-6 flex justify-end gap-2 print:hidden">
+      <div className="mb-6 flex flex-wrap justify-end gap-3 print:hidden">
         <button
           onClick={handlePrint}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow transition-colors flex items-center space-x-2 h-[52px]" // Height to match ReportGenerator
+          className="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center space-x-2 h-[52px]"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z"></path></svg>
-          <span>Print Page</span>
+          <span>Print Preview</span>
         </button>
-        {/* We use a wrapper to override the ReportGenerator specific dashboard styling if needed, 
-            but here we can just use it directly or style it slightly differently if the component accepts className */}
         <div className="w-auto">
              <ReportGenerator />
         </div>
