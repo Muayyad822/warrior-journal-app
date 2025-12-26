@@ -11,12 +11,12 @@ const getGenAIModel = () => {
   }
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   return genAI.getGenerativeModel({ 
-    model: "gemini-3-pro-preview",
+    model: "gemini-3-flash-preview",
     generationConfig: {
       temperature: 0.8,
       topP: 0.9,
       topK: 40,
-      maxOutputTokens: 200, 
+      maxOutputTokens: 1000, 
     },
   });
 };
@@ -192,6 +192,12 @@ Respond directly to what the user just asked or shared, using your persona as Te
     }
 
     if (error.message?.includes('API key')) {
+      const errorMsg = `[${new Date().toISOString()}] API Key Error: ${error.message}\nStack: ${error.stack}\n`;
+      try {
+          const fs = await import('fs');
+          fs.appendFileSync('server.log', errorMsg);
+      } catch (e) { console.error('Failed to write log', e); }
+
       return res.status(500).json({ 
         error: 'AI service configuration error.',
         type: 'config_error'

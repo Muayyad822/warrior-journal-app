@@ -33,5 +33,4 @@ app.post('/api/chat', adaptHandler(chatHandler));
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`\nNOTE: Ensure you have a .env file with GEMINI_API_KEY set.`);
 });
