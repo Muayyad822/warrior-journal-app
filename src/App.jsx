@@ -9,7 +9,7 @@ import Dashboard from './components/Dashboard';
 import Journal from './components/Journal';
 import CrisisLog from './components/CrisisLog';
 import EmergencyKit from './components/EmergencyKit';
-import Analyticss from './components/Analytics';
+import Analytics from './components/Analytics';
 import Motivation from './components/Motivation';
 import MedicalReports from './components/MedicalReports';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
@@ -20,7 +20,7 @@ import AIChat from './components/AIChat';
 import GuidePage from './components/Guide';
 import Settings from './components/Settings';
 
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react"
 import notificationService from './services/NotificationService';
 
 
@@ -48,7 +48,7 @@ const AppContent = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-20 md:pb-0">
       <Header />
       <main className="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
         <Routes>
@@ -56,7 +56,7 @@ const AppContent = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/crisis-log" element={<CrisisLog />} />
-          <Route path="/analytics" element={<Analyticss />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/motivation" element={<Motivation />} />
           <Route path="/medical-reports" element={<MedicalReports />} />
           <Route path="/emergency-kit" element={<EmergencyKit />} />
@@ -67,7 +67,7 @@ const AppContent = () => {
       <AIChat />
       <Footer />
       <PWAInstallPrompt />
-      <Analytics />
+      <VercelAnalytics />
       <Toaster 
         position="top-center"
         toastOptions={{

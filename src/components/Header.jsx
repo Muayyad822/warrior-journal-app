@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useHealthData } from '../context/HealthDataContext';
 import toast from 'react-hot-toast';
-import { Pencil, Check, X } from 'lucide-react';
+import { Pencil, Check, X, LayoutDashboard, BookOpen, AlertTriangle, BarChart2, Menu } from 'lucide-react';
 
 function Header() {
   const { getDisplayName, updateUserName } = useHealthData();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
+  const location = useLocation();
 
   const displayName = getDisplayName();
 
@@ -55,41 +56,60 @@ function Header() {
     setIsMenuOpen(false);
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
     <>
       <header className="glass sticky top-0 z-40 border-b border-gray-100">
-        <div className="container mx-auto flex justify-between items-center py-4">
+        <div className="container mx-auto flex justify-between items-center py-4 px-4 md:px-0">
           {/* App Title/Logo */}
           <Link to="/dashboard" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-purple-600 hover:opacity-80 transition-opacity">
             The Warrior's Journal
           </Link>
 
           {/* Desktop Navigation */}
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            <Link to="/dashboard" className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-primary-50 transition-all">Dashboard</Link>
-            <Link to="/journal" className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-primary-50 transition-all">Journal</Link>
-            <Link to="/crisis-log" className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-primary-50 transition-all">Crisis CLI</Link>
-            <Link to="/analytics" className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-primary-50 transition-all">Analytics</Link>
-            <Link to="/motivation" className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-primary-50 transition-all">Motivation</Link>
-            <Link to="/settings" className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-primary-50 transition-all">Settings</Link>
-            <Link to="/guide" className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-primary-50 transition-all">How to use app</Link>
-
+            <Link to="/dashboard" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/dashboard') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Dashboard</Link>
+            <Link to="/journal" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/journal') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Journal</Link>
+            <Link to="/crisis-log" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/crisis-log') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Crisis Log</Link>
+            <Link to="/analytics" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/analytics') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Analytics</Link>
+            <Link to="/motivation" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/motivation') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Motivation</Link>
+            <Link to="/settings" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/settings') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Settings</Link>
+            <Link to="/guide" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/guide') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>How to use app</Link>
           </nav>
-
-
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden z-50 p-2 text-slate-700"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
         </div>
       </header>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-t border-gray-200 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div className="flex justify-around items-center h-[70px] pb-2">
+            <Link to="/dashboard" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/dashboard') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
+                <LayoutDashboard className={`w-6 h-6 ${isActive('/dashboard') ? 'fill-primary-100' : ''}`} />
+                <span className="text-[10px] font-medium">Home</span>
+            </Link>
+            <Link to="/journal" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/journal') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
+                <BookOpen className={`w-6 h-6 ${isActive('/journal') ? 'fill-primary-100' : ''}`} />
+                <span className="text-[10px] font-medium">Journal</span>
+            </Link>
+            <div className="relative -top-6">
+                <Link to="/crisis-log" className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-rose-500 to-rose-600 text-white shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:scale-105 transition-all">
+                    <AlertTriangle className="w-6 h-6" />
+                </Link>
+                <span className="absolute -bottom-5 w-full text-center text-[10px] font-medium text-slate-500">Crisis</span>
+            </div>
+            <Link to="/analytics" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/analytics') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
+                <BarChart2 className={`w-6 h-6 ${isActive('/analytics') ? 'fill-primary-100' : ''}`} />
+                <span className="text-[10px] font-medium">Analytics</span>
+            </Link>
+            <button 
+                onClick={() => setIsMenuOpen(true)}
+                className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isMenuOpen ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+                <Menu className="w-6 h-6" />
+                <span className="text-[10px] font-medium">Menu</span>
+            </button>
+        </div>
+      </nav>
 
       {/* Mobile Sidebar Overlay */}
       {isMenuOpen && (

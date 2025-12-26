@@ -67,38 +67,40 @@ function CrisisLog() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Crisis Log - Emergency Tracking</h2>
-      <p className="mb-6 text-gray-600">Record details during pain crises or health emergencies to identify triggers and patterns.</p>
+      <h2 className="text-3xl font-bold text-slate-800 mb-6">Crisis Log - Emergency Tracking</h2>
+      <p className="mb-6 text-slate-600">Record details during pain crises or health emergencies to identify triggers and patterns.</p>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="glass-card p-6 space-y-6">
         {/* Crisis Severity */}
         <div>
-          <label htmlFor="severity" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="severity" className="block text-lg font-medium text-slate-700 mb-2">
             Crisis Severity (0-10)
           </label>
-          <input
-            type="range"
-            id="severity"
-            min="0"
-            max="10"
-            value={severity}
-            onChange={(e) => setSeverity(parseInt(e.target.value))}
-            className="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer range-lg"
-          />
-          <div className="text-center mt-2 text-xl font-semibold text-red-600">{severity}/10</div>
+          <div className="relative">
+             <input
+              type="range"
+              id="severity"
+              min="0"
+              max="10"
+              value={severity}
+              onChange={(e) => setSeverity(parseInt(e.target.value))}
+              className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-rose-600"
+            />
+          </div>
+          <div className="text-center mt-2 text-xl font-bold text-rose-600">{severity}/10</div>
         </div>
 
         {/* Duration */}
         <div>
-          <label htmlFor="duration" className="block text-lg font-medium text-gray-700 mb-2">
-            Duration of Crisis (e.g., "2 hours", "Half day")
+          <label htmlFor="duration" className="block text-lg font-medium text-slate-700 mb-2">
+            Duration of Crisis
           </label>
           <input
             type="text"
             id="duration"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
             placeholder="e.g., 4 hours, 1 day, 30 minutes"
             required
           />
@@ -106,31 +108,29 @@ function CrisisLog() {
 
         {/* Triggers */}
         <div>
-          <label className="block text-lg font-medium text-gray-700 mb-2">
+          <label className="block text-lg font-medium text-slate-700 mb-2">
             Possible Triggers
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {commonTriggers.map((trigger) => (
-              <div key={trigger} className="flex items-center">
+              <label key={trigger} className={`flex items-center p-3 rounded-xl border cursor-pointer transition-all ${triggers.includes(trigger) ? 'bg-rose-50 border-rose-200 text-rose-700 font-medium' : 'bg-white/50 border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                 <input
                   type="checkbox"
                   id={`trigger-${trigger}`}
                   value={trigger}
                   checked={triggers.includes(trigger)}
                   onChange={handleTriggerChange}
-                  className="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                  className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500 mr-2"
                 />
-                <label htmlFor={`trigger-${trigger}`} className="ml-2 block text-base text-gray-900">
-                  {trigger}
-                </label>
-              </div>
+                {trigger}
+              </label>
             ))}
           </div>
         </div>
 
         {/* Medications Used */}
         <div>
-          <label htmlFor="medicationsUsed" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="medicationsUsed" className="block text-lg font-medium text-slate-700 mb-2">
             Medications Used During Crisis
           </label>
           <textarea
@@ -138,14 +138,14 @@ function CrisisLog() {
             rows="3"
             value={medicationsUsed}
             onChange={(e) => setMedicationsUsed(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
             placeholder="e.g., Hydroxyurea (200mg), IV fluids, Painkillers"
           ></textarea>
         </div>
 
         {/* Location */}
         <div>
-          <label htmlFor="location" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="location" className="block text-lg font-medium text-slate-700 mb-2">
             Location of Crisis
           </label>
           <input
@@ -153,14 +153,14 @@ function CrisisLog() {
             id="location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
             placeholder="e.g., Home, Hospital, Work"
           />
         </div>
 
         {/* Circumstances */}
         <div>
-          <label htmlFor="circumstances" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="circumstances" className="block text-lg font-medium text-slate-700 mb-2">
             Circumstances / Notes
           </label>
           <textarea
@@ -168,18 +168,18 @@ function CrisisLog() {
             rows="4"
             value={circumstances}
             onChange={(e) => setCircumstances(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
             placeholder="Describe what was happening, who was with you, etc."
           ></textarea>
         </div>
 
         {/* Save Button */}
-        <div className="flex justify-end">
+        <div className="pt-4">
           <button
             type="submit"
-            className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            className="w-full sm:w-auto bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-rose-500/30 transition-all transform hover:-translate-y-0.5"
           >
-            Log Crisis
+            Log Crisis Entry
           </button>
         </div>
       </form>

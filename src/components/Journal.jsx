@@ -69,51 +69,60 @@ function Journal() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Daily Journal - Track Your Health</h2>
-      <p className="mb-6 text-gray-600">Record your daily health status to identify patterns and provide data for doctor visits.</p> 
+      <h2 className="text-3xl font-bold text-slate-800 mb-6">Daily Journal - Track Your Health</h2>
+      <p className="mb-6 text-slate-600">Record your daily health status to identify patterns and provide data for doctor visits.</p> 
 
       <form onSubmit={handleSubmit} className="glass-card p-6 space-y-6">
         {/* Pain Level */}
         <div>
-          <label htmlFor="painLevel" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="painLevel" className="block text-lg font-medium text-slate-700 mb-2">
             Pain Level (0-10)
           </label>
-          <input
-            type="range"
-            id="painLevel"
-            min="0"
-            max="10"
-            value={painLevel}
-            onChange={(e) => setPainLevel(parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg"
-          />
-          <div className="text-center mt-2 text-xl font-semibold text-blue-600">{painLevel}/10</div>
+          <div className="relative">
+             <input
+              type="range"
+              id="painLevel"
+              min="0"
+              max="10"
+              value={painLevel}
+              onChange={(e) => setPainLevel(parseInt(e.target.value))}
+              className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+            />
+          </div>
+          <div className="text-center mt-2 text-xl font-bold text-primary-600">{painLevel}/10</div>
         </div>
 
         {/* Mood */}
         <div>
-          <label htmlFor="mood" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="mood" className="block text-lg font-medium text-slate-700 mb-2">
             Mood
           </label>
-          <select
-            id="mood"
-            value={mood}
-            onChange={(e) => setMood(e.target.value)}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg rounded-md shadow-sm"
-            required
-          >
-            <option value="">Select your mood</option>
-            {moodOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              id="mood"
+              value={mood}
+              onChange={(e) => setMood(e.target.value)}
+              className="glass-input w-full px-4 py-3 appearance-none"
+              required
+            >
+              <option value="">Select your mood</option>
+              {moodOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+              <svg className="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {/* Hydration */}
         <div>
-          <label htmlFor="hydration" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="hydration" className="block text-lg font-medium text-slate-700 mb-2">
             Hydration (glasses of water)
           </label>
           <input
@@ -122,13 +131,13 @@ function Journal() {
             min="0"
             value={hydration}
             onChange={(e) => setHydration(parseInt(e.target.value) || 0)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
           />
         </div>
 
         {/* Sleep Hours */}
         <div>
-          <label htmlFor="sleepHours" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="sleepHours" className="block text-lg font-medium text-slate-700 mb-2">
             Sleep Hours
           </label>
           <input
@@ -138,13 +147,13 @@ function Journal() {
             step="0.5"
             value={sleepHours}
             onChange={(e) => setSleepHours(parseFloat(e.target.value) || 0)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
           />
         </div>
 
         {/* Medications Taken */}
         <div>
-          <label htmlFor="medications" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="medications" className="block text-lg font-medium text-slate-700 mb-2">
             Medications Taken
           </label>
           <textarea
@@ -152,38 +161,36 @@ function Journal() {
             rows="3"
             value={medications}
             onChange={(e) => setMedications(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
             placeholder="e.g., Tylenol (2 pills), Folic Acid (1 tab)"
           ></textarea>
         </div>
 
         {/* Symptoms Experienced */}
         <div>
-          <label className="block text-lg font-medium text-gray-700 mb-2">
+          <label className="block text-lg font-medium text-slate-700 mb-2">
             Symptoms Experienced
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {commonSymptoms.map((symptom) => (
-              <div key={symptom} className="flex items-center">
+               <label key={symptom} className={`flex items-center p-3 rounded-xl border cursor-pointer transition-all ${symptoms.includes(symptom) ? 'bg-primary-50 border-primary-200 text-primary-700 font-medium' : 'bg-white/50 border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                 <input
                   type="checkbox"
                   id={`symptom-${symptom}`}
                   value={symptom}
                   checked={symptoms.includes(symptom)}
                   onChange={handleSymptomChange}
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500 mr-2"
                 />
-                <label htmlFor={`symptom-${symptom}`} className="ml-2 block text-base text-gray-900">
-                  {symptom}
-                </label>
-              </div>
+                 {symptom}
+              </label>
             ))}
           </div>
         </div>
 
         {/* Personal Notes */}
         <div>
-          <label htmlFor="personalNotes" className="block text-lg font-medium text-gray-700 mb-2">
+          <label htmlFor="personalNotes" className="block text-lg font-medium text-slate-700 mb-2">
             Personal Notes
           </label>
           <textarea
@@ -191,18 +198,18 @@ function Journal() {
             rows="4"
             value={personalNotes}
             onChange={(e) => setPersonalNotes(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-lg"
+            className="glass-input w-full px-4 py-3"
             placeholder="Write a brief note about your day..."
           ></textarea>
         </div>
 
         {/* Save Button */}
-        <div className="flex justify-end">
+        <div className="pt-4">
           <button
             type="submit"
-            className="btn-primary px-8 py-3"
+            className="w-full sm:w-auto btn-primary px-8 py-3.5 text-lg shadow-lg shadow-primary-500/20"
           >
-            Save Entry
+            Save Journal Entry
           </button>
         </div>
       </form>
