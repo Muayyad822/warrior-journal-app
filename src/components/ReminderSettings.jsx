@@ -201,25 +201,53 @@ function ReminderSettings() {
 
         {/* Notification Permission Section */}
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">Notification Settings</h3>
-          {permissionStatus === 'granted' ? (
-            <div className="flex items-center text-green-600">
-              <Check className="w-5 h-5 mr-2" />
-              Notifications are enabled
-            </div>
-          ) : (
+          <div className="flex justify-between items-start">
             <div>
-              <p className="text-gray-600 mb-3">
-                Enable notifications to receive reminders on your device.
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Notification Settings</h3>
+              <p className="text-sm text-gray-500 mb-3 max-w-xl">
+                Note: As this is a web application, reminders work best when the app is open in a browser tab (even in the background) or installed as an app on your device.
               </p>
-              <button
-                onClick={requestNotificationPermission}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-              >
-                Enable Notifications
-              </button>
             </div>
-          )}
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4">
+            {permissionStatus === 'granted' ? (
+              <>
+                <div className="flex items-center text-green-600 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                  <Check className="w-5 h-5 mr-2" />
+                  Notifications are active
+                </div>
+                <button
+                  onClick={() => {
+                    notificationService.testNotification();
+                    toast.success('Test notification sent! Check your device notifications.');
+                  }}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                >
+                  Send Test Notification
+                </button>
+              </>
+            ) : (
+              <div>
+                <p className="text-gray-600 mb-3">
+                  Enable notifications to receive reminders on your device.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={requestNotificationPermission}
+                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Enable Notifications
+                  </button>
+                  {permissionStatus === 'denied' && (
+                    <p className="text-red-500 text-sm flex items-center">
+                      Permissions blocked. Please reset in browser settings.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Add/Edit Reminder Form */}

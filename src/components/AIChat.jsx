@@ -107,12 +107,14 @@ function AIChat() {
         toast.error('Please wait a moment before sending another message.');
       } else if (error.message.includes('safety')) {
         toast.error('Message blocked. Please rephrase your question.');
+      } else if (error.message.includes('configuration') || error.message.includes('config')) {
+        toast.error('AI Service not configured. Please check API Key.');
       } else if (error.message.includes('Failed to fetch')) {
         toast.error('Connection error. Please check your internet and try again.');
       } else if (error.message.includes('JSON')) {
         toast.error('Server communication error. Please try again.');
       } else {
-        toast.error('AI service unavailable. Please try again later.');
+        toast.error(error.message || 'AI service unavailable. Please try again later.');
       }
 
       // Add error message to chat
