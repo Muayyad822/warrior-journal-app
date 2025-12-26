@@ -24,6 +24,14 @@ A comprehensive sickle cell disease management and health tracking application b
 ```bash
 npm install
 npm run dev
+
+## Environment Configuration
+
+Create a `.env` file in the root directory:
+```env
+GEMINI_API_KEY=your_google_api_key_here
+```
+*Required for the AI Chat (Teni) feature.*
 ```
 
 ## Live App

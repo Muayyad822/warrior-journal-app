@@ -169,6 +169,36 @@ export const HealthDataProvider = ({ children }) => {
     setCrisisActionPlan(plan);
   };
 
+  // Quick action: Add water
+  const addWaterIntake = () => {
+    const today = new Date().toISOString().split("T")[0];
+    const todaysEntryIndex = journalEntries.findIndex((entry) => entry.date === today);
+
+    if (todaysEntryIndex !== -1) {
+      // Update existing entry
+      const updatedEntries = [...journalEntries];
+      updatedEntries[todaysEntryIndex] = {
+        ...updatedEntries[todaysEntryIndex],
+        hydration: (updatedEntries[todaysEntryIndex].hydration || 0) + 1
+      };
+      setJournalEntries(updatedEntries);
+    } else {
+      // Create new entry for today if it doesn't exist
+      const newEntry = {
+        id: Date.now(),
+        date: today,
+        painLevel: 0, // Default meaningful values
+        mood: 'Neutral',
+        hydration: 1,
+        sleepHours: 0,
+        medications: '',
+        symptoms: [],
+        personalNotes: ''
+      };
+      setJournalEntries(prev => [...prev, newEntry]);
+    }
+  };
+
   // User personalization functions
   const updateUserName = (name) => {
     const trimmedName = name.trim();
@@ -202,6 +232,7 @@ export const HealthDataProvider = ({ children }) => {
     updateUserName,
     completeOnboarding,
     getDisplayName,
+    addWaterIntake,
   };
 
   return (

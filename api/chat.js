@@ -1,15 +1,25 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ 
-  model: "gemini-1.5-flash",
-  generationConfig: {
-    temperature: 0.8,
-    topP: 0.9,
-    topK: 40,
-    maxOutputTokens: 200, 
-  },
-});
+
+// Initialize outside to allow for potential cold-start optimizations in Vercel, 
+// but handle missing keys gracefully inside the function if needed.
+// actually, for safety, let's keep it inside or just not crash if env is missing at top level.
+// Better: Helper function to get model
+const getGenAIModel = () => {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY is not set');
+  }
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  return genAI.getGenerativeModel({ 
+    model: "gemini-3-flash-preview",
+    generationConfig: {
+      temperature: 0.8,
+      topP: 0.9,
+      topK: 40,
+      maxOutputTokens: 1000, 
+    },
+  });
+};
 
 // Add rate limiting storage (in production, use Redis or database)
 const userRequests = new Map();
@@ -135,6 +145,7 @@ Respond directly to what the user just asked or shared, using your persona as Te
     console.log('Conversation context being sent to AI:', conversationContext);
 
     // Generate AI response
+    const model = getGenAIModel();
     const result = await model.generateContent(conversationContext);
     const response = await result.response;
     let aiResponse = response.text().trim();
@@ -181,6 +192,12 @@ Respond directly to what the user just asked or shared, using your persona as Te
     }
 
     if (error.message?.includes('API key')) {
+      const errorMsg = `[${new Date().toISOString()}] API Key Error: ${error.message}\nStack: ${error.stack}\n`;
+      try {
+          const fs = await import('fs');
+          fs.appendFileSync('server.log', errorMsg);
+      } catch (e) { console.error('Failed to write log', e); }
+
       return res.status(500).json({ 
         error: 'AI service configuration error.',
         type: 'config_error'
@@ -188,10 +205,16 @@ Respond directly to what the user just asked or shared, using your persona as Te
     }
 
     // Generic error fallback
+    const errorMsg = `[${new Date().toISOString()}] Error: ${error.message}\nStack: ${error.stack}\n`;
+    try {
+        const fs = await import('fs');
+        fs.appendFileSync('server.log', errorMsg);
+    } catch (e) { console.error('Failed to write log', e); }
+
     return res.status(500).json({ 
       error: 'AI service temporarily unavailable. Please try again.',
       type: 'service_error',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: error.message
     });
   }
 }

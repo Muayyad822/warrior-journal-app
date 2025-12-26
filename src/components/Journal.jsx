@@ -72,7 +72,7 @@ function Journal() {
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Daily Journal - Track Your Health</h2>
       <p className="mb-6 text-gray-600">Record your daily health status to identify patterns and provide data for doctor visits.</p> 
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="glass-card p-6 space-y-6">
         {/* Pain Level */}
         <div>
           <label htmlFor="painLevel" className="block text-lg font-medium text-gray-700 mb-2">
@@ -200,7 +200,7 @@ function Journal() {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="btn-primary px-8 py-3"
           >
             Save Entry
           </button>
