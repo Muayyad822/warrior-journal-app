@@ -53,8 +53,8 @@ function Settings() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-primary-50 text-primary-700 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <Icon className="w-5 h-5 mr-3" />
@@ -66,7 +66,7 @@ function Settings() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-6 min-h-[400px]">
+        <div className="flex-1 glass-card p-6 min-h-[400px]">
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Profile Settings</h2>
