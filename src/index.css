@@ -1,58 +1,110 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
 
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
-  --color-primary-950: #1e1b4b;
+  /* Primary: Deep Burgundy (Awareness, strength, premium) */
+  --color-primary-50: #fcf4f6;
+  --color-primary-100: #fae6eb;
+  --color-primary-200: #f3ccd7;
+  --color-primary-300: #e8a3b5;
+  --color-primary-400: #da718f;
+  --color-primary-500: #ca466b;
+  --color-primary-600: #b12d53;
+  --color-primary-700: #962244;
+  --color-primary-800: #7d203c;
+  --color-primary-900: #6a1f36;
+  --color-primary-950: #3c0d1b;
 
-  --color-secondary-50: #fdf2f8;
-  --color-secondary-100: #fce7f3;
-  --color-secondary-200: #fbcfe8;
-  --color-secondary-300: #f9a8d4;
-  --color-secondary-400: #f472b6;
-  --color-secondary-500: #ec4899;
-  --color-secondary-600: #db2777;
-  --color-secondary-700: #be185d;
-  --color-secondary-800: #9d174d;
-  --color-secondary-900: #831843;
-  --color-secondary-950: #500724;
+  /* Secondary: Soft Coral / Warm Orange (Warmth, hope, energy) */
+  --color-secondary-50: #fff6f0;
+  --color-secondary-100: #ffeadb;
+  --color-secondary-200: #ffd3b5;
+  --color-secondary-300: #ffb485;
+  --color-secondary-400: #ff8c4c;
+  --color-secondary-500: #ff6a1f;
+  --color-secondary-600: #f04e06;
+  --color-secondary-700: #c83808;
+  --color-secondary-800: #9e2d0f;
+  --color-secondary-900: #7f2710;
+  --color-secondary-950: #451005;
+
+  /* Tertiary/Accent: Teal (Calm, medical, soothing) */
+  --color-teal-50: #f0fdfa;
+  --color-teal-100: #ccfbf1;
+  --color-teal-200: #99f6e4;
+  --color-teal-300: #5eead4;
+  --color-teal-400: #2dd4bf;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0d9488;
+  --color-teal-700: #0f766e;
+  --color-teal-800: #115e59;
+  --color-teal-900: #134e4a;
+  --color-teal-950: #042f2e;
 }
 
 @layer base {
   body {
-    background-color: #f8fafc;
+    background-color: #fcfdfd;
     color: #1e293b;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
+  /* Custom Scrollbar for Webkit */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-primary-300);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-500);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  /* Custom Scrollbar for Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-400) transparent;
+  }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-sm supports-[backdrop-filter]:bg-white/60;
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] supports-[backdrop-filter]:bg-white/60;
   }
   
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-slate-100;
+    @apply bg-white/80 backdrop-blur-lg rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 border border-white/60 relative overflow-hidden;
   }
   
   .glass-input {
-    @apply bg-white/50 backdrop-blur-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all outline-none;
+    @apply bg-white/60 backdrop-blur-md border border-slate-200/60 rounded-2xl focus:ring-2 focus:ring-primary-400/50 focus:border-primary-400 transition-all outline-none shadow-inner;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5 transition-all duration-300 rounded-xl font-medium;
+    @apply bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-[0_8px_20px_rgb(177,45,83,0.25)] hover:shadow-[0_12px_25px_rgb(177,45,83,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 rounded-2xl font-semibold;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-slate-700 border border-slate-200 shadow-sm hover:border-slate-300 hover:bg-slate-50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 rounded-2xl font-semibold;
   }
 }

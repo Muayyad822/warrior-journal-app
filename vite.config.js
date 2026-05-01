@@ -9,7 +9,7 @@ export default defineConfig({
       '/api': {
         target: process.env.NODE_ENV === 'production' 
           ? 'https://thewarriorsjournal.vercel.app'
-          : 'http://localhost:3000',
+          : 'http://127.0.0.1:3000',
         changeOrigin: true,
         secure: true
       }

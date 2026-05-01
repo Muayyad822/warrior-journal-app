@@ -237,35 +237,46 @@ This is an automated emergency alert from my health app.`;
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Emergency Kit - Instant Help</h2>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-8">
+      <div className="text-center md:text-left mb-8">
+        <h2 className="text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight">Emergency Kit</h2>
+        <p className="text-lg text-slate-500 mt-2 font-medium">Instant help and crisis management tools</p>
+      </div>
 
       {/* Crisis Alert Button */}
-      <section className="bg-red-700 text-white rounded-lg shadow-lg p-6 mb-8 text-center">
-        <button
-          onClick={sendLocationToContacts}
-          disabled={isGettingLocation}
-          className={`${
-            isGettingLocation
-              ? 'bg-red-400 cursor-not-allowed'
-              : 'bg-red-500 hover:bg-red-600'
-          } text-white font-bold py-4 px-8 rounded-full shadow-xl transition-colors focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-offset-2 flex items-center justify-center mx-auto space-x-3 text-xl`}
-        >
-          <span>{isGettingLocation ? 'Getting Location...' : <><AlertTriangle className="w-6 h-6 mr-2" /> CRISIS ALERT - Send Location</>}</span>
-        </button>
-        <p className="mt-4 text-sm opacity-80">
-          Sends your location with emergency contacts via WhatsApp or SMS. <br />
-          Requires phone numbers with country codes (e.g., +2341234567890).
-        </p>
+      <section className="bg-gradient-to-r from-primary-700 to-primary-900 text-white rounded-3xl shadow-[0_8px_30px_rgb(177,45,83,0.2)] p-8 sm:p-10 text-center relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-white/10 transition-colors duration-700"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-secondary-500/20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4"></div>
+        
+        <div className="relative z-10 flex flex-col items-center">
+          <button
+            onClick={sendLocationToContacts}
+            disabled={isGettingLocation}
+            className={`${
+              isGettingLocation
+                ? 'bg-primary-400/80 cursor-not-allowed'
+                : 'bg-white text-primary-700 hover:bg-primary-50 hover:-translate-y-1 active:translate-y-0'
+            } font-bold py-5 px-10 rounded-2xl shadow-[0_8px_20px_rgb(0,0,0,0.15)] hover:shadow-[0_12px_25px_rgb(0,0,0,0.2)] transition-all flex items-center justify-center space-x-3 text-xl`}
+          >
+            <span>{isGettingLocation ? 'Getting Location...' : <><AlertTriangle className="w-7 h-7 mr-2 inline-block text-secondary-500" /> CRISIS ALERT - Send Location</>}</span>
+          </button>
+          <p className="mt-6 text-sm text-primary-50 max-w-lg mx-auto font-medium leading-relaxed">
+            Sends your location to your emergency contacts via WhatsApp or SMS. <br />
+            Requires phone numbers with country codes (e.g., +2341234567890).
+          </p>
+        </div>
       </section>
 
       {/* Emergency Contacts */}
-      <section className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-700">Emergency Contacts</h3>
+      <section className="glass-card p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h3 className="text-xl font-bold text-slate-800 flex items-center tracking-tight">
+            <Phone className="w-5 h-5 mr-2.5 text-primary-500" />
+            Emergency Contacts
+          </h3>
           <button
             onClick={addNewContact}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+            className="w-full sm:w-auto bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-5 py-2 rounded-2xl text-sm font-semibold transition-colors shadow-sm"
           >
             + Add Contact
           </button>
@@ -273,35 +284,35 @@ This is an automated emergency alert from my health app.`;
 
         <div className="space-y-3">
           {emergencyContacts && emergencyContacts.map((contact, index) => (
-            <div key={contact.id}>
+            <div key={`${contact.id || 'contact'}-${index}`}>
               {editingIndex === index ? (
-                <div className="bg-gray-50 border border-gray-300 p-4 rounded-lg">
+                <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl">
                   <div className="flex flex-col gap-3">
                     <input
                       type="text"
                       value={nameInput}
                       onChange={(e) => setNameInput(e.target.value)}
                       placeholder="Contact Name (e.g., Mom, Dr. Smith, Work Emergency)"
-                      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="glass-input px-4 py-3 text-sm w-full"
                     />
                     <input
                       type="tel"
                       value={phoneInput}
                       onChange={(e) => setPhoneInput(e.target.value)}
                       placeholder="Add country codes (e.g., +234...)"
-                      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="glass-input px-4 py-3 text-sm w-full"
                       autoFocus
                     />
-                    <div className="flex gap-2">
+                    <div className="flex gap-3 mt-2">
                       <button
                         onClick={() => saveContact(index)}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                        className="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm"
                       >
-                        Save
+                        Save Contact
                       </button>
                       <button
                         onClick={cancelEditing}
-                        className="bg-red-500 hover:bg-gray-500 text-white px-4 py-2 rounded-md text-sm font-medium"
+                        className="flex-1 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                       >
                         Cancel
                       </button>
@@ -309,7 +320,7 @@ This is an automated emergency alert from my health app.`;
                   </div>
                 </div>
               ) : (
-                <div className="w-full bg-white border border-gray-300 p-4 rounded-lg flex justify-between items-center hover:bg-gray-50 transition-colors">
+                <div className="w-full bg-white border border-slate-200 p-5 rounded-2xl flex justify-between items-center hover:shadow-md hover:border-primary-200 transition-all group">
                   <button
                     onClick={() => {
                       if (contact.phone) {
@@ -318,24 +329,24 @@ This is an automated emergency alert from my health app.`;
                         startEditingContact(index);
                       }
                     }}
-                    className="flex-1 flex justify-between items-center text-left"
+                    className="flex-1 flex flex-col sm:flex-row sm:justify-between sm:items-center text-left"
                   >
-                    <span className="font-medium text-gray-800">{contact.name}</span>
-                    <span className={`font-medium ${contact.phone ? 'text-blue-600' : 'text-gray-500 italic'}`}>
-                      <Phone className="w-4 h-4 mr-1" /> {contact.phone || 'Add Number'}
+                    <span className="font-bold text-slate-800 text-lg sm:text-base tracking-tight">{contact.name}</span>
+                    <span className={`font-semibold mt-1 sm:mt-0 flex items-center ${contact.phone ? 'text-primary-600' : 'text-slate-400 italic'}`}>
+                      <Phone className="w-4 h-4 mr-1.5" /> {contact.phone || 'Add Number'}
                     </span>
                   </button>
-                  <div className="flex items-center gap-2 ml-3">
+                  <div className="flex items-center gap-1.5 ml-4">
                     <button
                       onClick={() => startEditingContact(index)}
-                      className="text-blue-500 hover:text-blue-700 text-sm p-1 rounded-full hover:bg-blue-50"
+                      className="text-slate-400 hover:text-primary-600 p-2.5 rounded-xl hover:bg-primary-50 transition-colors"
                       title="Edit Contact"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => removeContact(contact.id)}
-                      className="text-red-500 hover:text-red-700 text-sm p-1 rounded-full hover:bg-red-50"
+                      className="text-slate-400 hover:text-secondary-600 p-2.5 rounded-xl hover:bg-secondary-50 transition-colors"
                       title="Remove Contact"
                     >
                       <X className="w-4 h-4" />
@@ -352,20 +363,18 @@ This is an automated emergency alert from my health app.`;
       </section>
 
       {/* Crisis Action Plan */}
-      <section className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Crisis Action Plan</h3>
+      <section className="glass-card p-6 sm:p-8">
+        <h3 className="text-xl font-bold text-slate-800 mb-4 tracking-tight">Crisis Action Plan</h3>
         <textarea
           value={crisisActionPlan}
           onChange={(e) => updateCrisisActionPlan(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          rows="8"
-          placeholder="1. Take prescribed pain medication
-2. Drink water immediately
-3. Apply heat to affected areas
-4. Call doctor if pain > 8/10
-5. Go to ER if no improvement in 2 hours"
+          className="glass-input w-full p-4 text-slate-700 leading-relaxed resize-y min-h-[200px]"
+          placeholder="1. Take prescribed pain medication&#10;2. Drink water immediately&#10;3. Apply heat to affected areas&#10;4. Call doctor if pain > 8/10&#10;5. Go to ER if no improvement in 2 hours"
         />
-        <p className="text-sm text-gray-500 mt-2">Changes are saved automatically.</p>
+        <p className="text-sm font-medium text-slate-500 mt-3 flex items-center">
+          <span className="w-2 h-2 rounded-full bg-teal-500 mr-2"></span>
+          Changes are saved automatically
+        </p>
       </section>
     </div>
   );

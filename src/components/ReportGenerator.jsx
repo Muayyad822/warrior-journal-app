@@ -123,10 +123,10 @@ const ReportGenerator = () => {
     <button
       onClick={generateReport}
       disabled={isGenerating}
-      className={`bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-lg text-center transition-colors flex flex-col items-center justify-center min-h-[120px] w-full ${isGenerating ? 'opacity-75 cursor-not-allowed' : ''}`}
+      className={`bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center space-x-2 h-[52px] ${isGenerating ? 'opacity-75 cursor-not-allowed' : ''}`}
     >
-      {isGenerating ? <Loader className="text-3xl mb-3 animate-spin" /> : <FileDown className="text-3xl mb-3" />}
-      <div className="font-semibold">{isGenerating ? 'Generating...' : 'Doctor Report'}</div>
+      {isGenerating ? <Loader className="w-5 h-5 animate-spin" /> : <FileDown className="w-5 h-5" />}
+      <span>{isGenerating ? 'Generating...' : 'Doctor Report'}</span>
     </button>
   );
 };

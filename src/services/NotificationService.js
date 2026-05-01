@@ -17,11 +17,16 @@ class NotificationService {
       
       if ('serviceWorker' in navigator) {
         try {
-          // Wait for service worker to be ready, but don't block indefinitely
-          this.registration = await navigator.serviceWorker.ready.catch(e => {
-            console.warn('Service worker ready failed, falling back to non-SW notifications', e);
-            return null;
-          });
+          // Check if there are any service workers registered to avoid hanging indefinitely
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          if (registrations && registrations.length > 0) {
+            // Give it max 1 second to be ready
+            const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 1000));
+            this.registration = await Promise.race([
+              navigator.serviceWorker.ready,
+              timeoutPromise
+            ]);
+          }
         } catch (error) {
           console.error('Service worker registration failed:', error);
         }
@@ -100,7 +105,8 @@ class NotificationService {
     await this.requestPermission();
     return this.showNotification('Test Reminder', {
       body: 'Great! Notifications are working correctly.',
-      tag: 'test-notification'
+      tag: `test-notification-${Date.now()}`,
+      requireInteraction: true
     });
   }
 

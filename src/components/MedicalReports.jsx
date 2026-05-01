@@ -97,8 +97,8 @@ function MedicalReports() {
           <h4 className="text-lg font-medium text-gray-700 mb-2">Emergency Contacts ({emergencyContacts.length})</h4>
           {emergencyContacts.length > 0 ? (
             <ul className="list-disc list-inside text-gray-700 mb-4">
-              {emergencyContacts.map((contact) => (
-                <li key={contact.id}>{contact.name}: {contact.phone}</li>
+              {emergencyContacts.map((contact, index) => (
+                <li key={`${contact.id || 'contact'}-${index}`}>{contact.name}: {contact.phone}</li>
               ))}
             </ul>
           ) : (

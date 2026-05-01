@@ -28,10 +28,10 @@ function Dashboard() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-slate-800 mb-2">
-            {displayName}'s Health Manager
+          <h1 className="text-3xl lg:text-4xl font-bold text-slate-800 tracking-tight mb-2">
+            Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500">{displayName}</span>
           </h1>
-          <p className="text-lg text-slate-500">
+          <p className="text-lg text-slate-500 font-medium">
             Monitor patterns, track progress, and stay resilient.
           </p>
         </div>
@@ -40,61 +40,83 @@ function Dashboard() {
       
       
       {/* Emergency Kit Section - Always visible */}
-      {/* Emergency Kit Section - Always visible */}
-      <section className="bg-gradient-to-r from-rose-600 to-rose-700 text-white rounded-3xl shadow-xl shadow-rose-500/20 p-6 sm:p-8 text-center relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-white/5 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/20 to-transparent pointer-events-none"></div>
-        <h2 className="text-2xl font-bold mb-4 flex items-center justify-center relative z-10">
-          <AlertTriangle className="w-8 h-8 mr-3" /> Crisis Emergency Kit
-        </h2>
-        <p className="mb-6 text-rose-50 max-w-2xl mx-auto relative z-10 text-lg">Quick access to emergency contacts and crisis management tools during sickle cell pain episodes.</p>
-        <Link
-          to="/emergency-kit"
-          className="bg-white text-rose-700 hover:bg-rose-50 font-bold py-3 px-8 rounded-full text-lg transition-all shadow-lg active:scale-95 inline-block relative z-10"
-        >
-          Access Emergency Kit
-        </Link>
+      <section className="bg-gradient-to-r from-primary-700 to-primary-900 text-white rounded-3xl shadow-[0_8px_30px_rgb(177,45,83,0.2)] p-6 sm:p-8 text-center relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-white/10 transition-colors duration-700"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-secondary-500/20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4"></div>
+        
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="bg-white/10 p-3 rounded-full mb-4 backdrop-blur-md border border-white/20">
+            <AlertTriangle className="w-8 h-8 text-secondary-200" />
+          </div>
+          <h2 className="text-2xl lg:text-3xl font-bold mb-3 tracking-tight">
+            Crisis Emergency Kit
+          </h2>
+          <p className="mb-8 text-primary-50 max-w-2xl mx-auto text-lg leading-relaxed">
+            Quick access to emergency contacts, medical IDs, and crisis management tools during a pain episode.
+          </p>
+          <Link
+            to="/emergency-kit"
+            className="bg-white text-primary-700 hover:bg-primary-50 font-bold py-3.5 px-8 rounded-2xl text-lg transition-all shadow-[0_8px_20px_rgb(0,0,0,0.15)] hover:shadow-[0_12px_25px_rgb(0,0,0,0.2)] hover:-translate-y-1 active:translate-y-0"
+          >
+            Access Emergency Kit
+          </Link>
+        </div>
       </section>
 
       {/* Weather Widget */}
       <WeatherWidget />
       
       {/* Key Information Section */}
-      {/* Key Information Section */}
       <section className="glass-card p-6 lg:p-8">
-        <h2 className="text-xl font-bold text-slate-700 mb-6 flex items-center">
-          <Activity className="w-5 h-5 mr-2 text-primary-500" />
-          Health Tracking Summary
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-primary-50/50 p-6 rounded-2xl flex flex-col justify-center items-center text-center border border-primary-100 hover:border-primary-200 transition-colors">
-            <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">Journal Entries</p>
-            <p className="text-4xl font-bold text-primary-600 mt-2">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-slate-800 flex items-center tracking-tight">
+            <Activity className="w-6 h-6 mr-2.5 text-primary-500" />
+            Health Tracking Summary
+          </h2>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+          <div className="bg-primary-50/80 p-6 rounded-3xl flex flex-col justify-center items-center text-center border border-primary-100/50 hover:bg-primary-50 transition-colors group">
+            <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-500 mb-4 group-hover:scale-110 transition-transform">
+              <FileText className="w-6 h-6" />
+            </div>
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Journal Entries</p>
+            <p className="text-4xl font-bold text-primary-600 mt-2 tracking-tight">
               {journalEntries.length}
             </p>
           </div>
-          <div className="bg-rose-50/50 p-6 rounded-2xl flex flex-col justify-center items-center text-center border border-rose-100 hover:border-rose-200 transition-colors">
-            <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">Pain Crisis Episodes</p>
-            <p className="text-4xl font-bold text-rose-600 mt-2">
+          
+          <div className="bg-secondary-50/80 p-6 rounded-3xl flex flex-col justify-center items-center text-center border border-secondary-100/50 hover:bg-secondary-50 transition-colors group">
+            <div className="p-3 bg-white rounded-2xl shadow-sm text-secondary-500 mb-4 group-hover:scale-110 transition-transform">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Crisis Episodes</p>
+            <p className="text-4xl font-bold text-secondary-600 mt-2 tracking-tight">
               {crisisLogs.length}
             </p>
           </div>
-          <div className="bg-teal-50/50 p-6 rounded-2xl flex flex-col justify-center items-center text-center border border-teal-100 hover:border-teal-200 transition-colors">
-            <p className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-2">Today's Status</p>
-            <div className="flex flex-col gap-2 w-full items-center">
-              <p className="text-xl font-bold text-teal-700">
-                Pain: {todaysStatus.painLevel}/10
-              </p>
-              <div className="flex items-center justify-between bg-white rounded-full px-4 py-1.5 shadow-sm border border-teal-100 w-full max-w-[140px]">
-                <span className="flex items-center text-teal-600 font-medium">
-                  <Droplets className="w-4 h-4 mr-1.5" />
+          
+          <div className="bg-teal-50/80 p-6 rounded-3xl flex flex-col justify-center items-center text-center border border-teal-100/50 hover:bg-teal-50 transition-colors group">
+            <div className="p-3 bg-white rounded-2xl shadow-sm text-teal-500 mb-4 group-hover:scale-110 transition-transform">
+              <Activity className="w-6 h-6" />
+            </div>
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Today's Status</p>
+            <div className="flex flex-col gap-2.5 w-full items-center">
+              <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-teal-100 w-full max-w-[160px] flex justify-between items-center">
+                <span className="text-xs font-semibold text-slate-500">Pain Level</span>
+                <span className="text-sm font-bold text-teal-700">{todaysStatus.painLevel}/10</span>
+              </div>
+              <div className="bg-white px-3 py-1.5 rounded-xl shadow-sm border border-teal-100 w-full max-w-[160px] flex justify-between items-center">
+                <span className="flex items-center text-teal-600 font-semibold text-xs">
+                  <Droplets className="w-3.5 h-3.5 mr-1" />
                   {todaysStatus.hydration}
                 </span>
                 <button 
                   onClick={addWaterIntake}
-                  className="bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-full p-1 transition-colors ml-2"
+                  className="bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-lg p-1.5 transition-colors"
                   title="Add water intake"
                 >
-                  <Plus className="w-3 h-3" />
+                  <Plus className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
@@ -104,51 +126,62 @@ function Dashboard() {
 
       {/* Reminder Status Section */}
       <section className="glass-card p-6 lg:p-8">
-        <h2 className="text-xl font-bold text-slate-700 mb-6 flex items-center">
-          <Bell className="w-5 h-5 mr-2 text-primary-500" />
-          Daily Reminders
-        </h2>
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-8">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary-600">{activeReminders.length}</div>
-              <div className="text-xs uppercase tracking-wider text-slate-400 font-medium">Active</div>
-            </div>
-            <div className="text-center">
-              <div className={`text-3xl flex justify-center ${notificationsEnabled ? 'text-teal-500' : 'text-rose-500'}`}>
-                {notificationsEnabled ? <Check className="w-8 h-8" /> : <X className="w-8 h-8" />}
-              </div>
-              <div className="text-xs uppercase tracking-wider text-slate-400 font-medium">
-                {notificationsEnabled ? 'Enabled' : 'Disabled'}
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+          <h2 className="text-xl font-bold text-slate-800 flex items-center tracking-tight">
+            <Bell className="w-6 h-6 mr-2.5 text-primary-500" />
+            Daily Reminders
+          </h2>
           <Link
             to="/settings"
-            className="w-full sm:w-auto text-center px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-colors"
+            className="w-full sm:w-auto text-center px-5 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold rounded-2xl transition-all shadow-sm"
           >
             Manage Reminders
           </Link>
         </div>
+        
+        <div className="flex items-center gap-8 mb-2">
+          <div className="flex items-center gap-4 bg-primary-50/50 px-5 py-3 rounded-2xl border border-primary-100">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-primary-600 font-bold text-xl">
+              {activeReminders.length}
+            </div>
+            <div>
+              <div className="text-sm font-bold text-slate-700">Active Tasks</div>
+              <div className="text-xs text-slate-500 font-medium">Scheduled for today</div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4 bg-slate-50 px-5 py-3 rounded-2xl border border-slate-100">
+            <div className={`w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm ${notificationsEnabled ? 'text-teal-500' : 'text-slate-400'}`}>
+              {notificationsEnabled ? <Check className="w-6 h-6" /> : <X className="w-6 h-6" />}
+            </div>
+            <div>
+              <div className="text-sm font-bold text-slate-700">Notifications</div>
+              <div className="text-xs text-slate-500 font-medium">{notificationsEnabled ? 'Enabled' : 'Disabled'}</div>
+            </div>
+          </div>
+        </div>
+
         {activeReminders.length > 0 && (
           <div className="mt-6 pt-6 border-t border-slate-100">
-            <h3 className="text-sm font-semibold text-slate-500 mb-3 uppercase tracking-wide">Today's Active Reminders:</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Today's Schedule</h3>
+            <div className="flex flex-wrap gap-2.5">
               {activeReminders.slice(0, 3).map((reminder) => (
-                <div key={reminder.id} className="flex items-center bg-primary-50 text-primary-700 px-3 py-1.5 rounded-lg text-sm border border-primary-100">
-                  <span className="mr-2 opacity-70">
-                    {reminder.type === 'medication' ? <Pill className="w-3.5 h-3.5" /> :
-                     reminder.type === 'water' ? <Droplets className="w-3.5 h-3.5" /> :
-                     reminder.type === 'health-check' ? <FileText className="w-3.5 h-3.5" /> :
-                     reminder.type === 'exercise' ? <Activity className="w-3.5 h-3.5" /> :
-                     reminder.type === 'appointment' ? <Calendar className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+                <div key={reminder.id} className="flex items-center bg-white shadow-sm border border-slate-200 text-slate-700 px-3 py-2 rounded-xl text-sm">
+                  <span className="mr-2.5 p-1.5 bg-primary-50 rounded-lg text-primary-600">
+                    {reminder.type === 'medication' ? <Pill className="w-4 h-4" /> :
+                     reminder.type === 'water' ? <Droplets className="w-4 h-4" /> :
+                     reminder.type === 'health-check' ? <FileText className="w-4 h-4" /> :
+                     reminder.type === 'exercise' ? <Activity className="w-4 h-4" /> :
+                     reminder.type === 'appointment' ? <Calendar className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
                   </span>
-                  <span className="mr-2 font-mono text-xs bg-white px-1.5 rounded text-primary-600">{reminder.time}</span>
-                  <span className="truncate max-w-24 font-medium">{reminder.title}</span>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-primary-600">{reminder.time}</span>
+                    <span className="truncate max-w-[120px] font-semibold text-[13px]">{reminder.title}</span>
+                  </div>
                 </div>
               ))}
               {activeReminders.length > 3 && (
-                <div className="text-xs font-medium text-slate-400 px-2 py-1.5 flex items-center">
+                <div className="flex items-center bg-slate-50 border border-slate-200 text-slate-500 px-4 py-2 rounded-xl text-sm font-semibold">
                   +{activeReminders.length - 3} more
                 </div>
               )}
@@ -159,46 +192,49 @@ function Dashboard() {
 
       {/* Quick Actions */}
       <section className="glass-card p-6 lg:p-8">
-        <h2 className="text-xl font-bold text-slate-700 mb-6">Health Management Tools</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <h2 className="text-xl font-bold text-slate-800 mb-6 tracking-tight">Quick Actions</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <Link
             to="/journal"
-            className="group bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-2xl text-center transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center justify-center min-h-[140px]"
+            className="group bg-gradient-to-br from-teal-500 to-teal-600 text-white p-5 rounded-3xl text-center transition-all hover:shadow-[0_12px_25px_rgb(20,184,166,0.3)] hover:-translate-y-1 flex flex-col items-center justify-center min-h-[150px] relative overflow-hidden border border-teal-400/50"
           >
-            <div className="p-3 bg-white/20 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                <FileText className="w-6 h-6" />
+            <div className="absolute top-0 left-0 w-full h-full bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+            <div className="p-3.5 bg-white/20 rounded-2xl mb-3 group-hover:scale-110 transition-transform backdrop-blur-sm shadow-sm">
+                <FileText className="w-7 h-7" />
             </div>
-            <div className="font-semibold text-sm">Daily Journal</div>
+            <div className="font-bold text-sm tracking-wide">Daily Journal</div>
           </Link>
           <Link
             to="/crisis-log"
-            className="group bg-gradient-to-br from-rose-500 to-rose-600 text-white p-4 rounded-2xl text-center transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center justify-center min-h-[140px]"
+            className="group bg-gradient-to-br from-secondary-500 to-secondary-600 text-white p-5 rounded-3xl text-center transition-all hover:shadow-[0_12px_25px_rgb(255,106,31,0.3)] hover:-translate-y-1 flex flex-col items-center justify-center min-h-[150px] relative overflow-hidden border border-secondary-400/50"
           >
-             <div className="p-3 bg-white/20 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                <AlertTriangle className="w-6 h-6" />
+            <div className="absolute top-0 left-0 w-full h-full bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+            <div className="p-3.5 bg-white/20 rounded-2xl mb-3 group-hover:scale-110 transition-transform backdrop-blur-sm shadow-sm">
+                <AlertTriangle className="w-7 h-7" />
             </div>
-            <div className="font-semibold text-sm">Log Crisis</div>
+            <div className="font-bold text-sm tracking-wide">Log Crisis</div>
           </Link>
           <Link
             to="/analytics"
-            className="group bg-gradient-to-br from-teal-500 to-teal-600 text-white p-4 rounded-2xl text-center transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center justify-center min-h-[140px]"
+            className="group bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-5 rounded-3xl text-center transition-all hover:shadow-[0_12px_25px_rgb(99,102,241,0.3)] hover:-translate-y-1 flex flex-col items-center justify-center min-h-[150px] relative overflow-hidden border border-indigo-400/50"
           >
-            <div className="p-3 bg-white/20 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                <BarChart3 className="w-6 h-6" />
+            <div className="absolute top-0 left-0 w-full h-full bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+            <div className="p-3.5 bg-white/20 rounded-2xl mb-3 group-hover:scale-110 transition-transform backdrop-blur-sm shadow-sm">
+                <BarChart3 className="w-7 h-7" />
             </div>
-            <div className="font-semibold text-sm">Analytics</div>
+            <div className="font-bold text-sm tracking-wide">Analytics</div>
           </Link>
           <Link
             to="/medical-reports"
-            className="group bg-gradient-to-br from-violet-500 to-violet-600 text-white p-4 rounded-2xl text-center transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center justify-center min-h-[140px]"
+            className="group bg-gradient-to-br from-primary-500 to-primary-600 text-white p-5 rounded-3xl text-center transition-all hover:shadow-[0_12px_25px_rgb(202,70,107,0.3)] hover:-translate-y-1 flex flex-col items-center justify-center min-h-[150px] relative overflow-hidden border border-primary-400/50"
           >
-            <div className="p-3 bg-white/20 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                <Clipboard className="w-6 h-6" />
+             <div className="absolute top-0 left-0 w-full h-full bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+            <div className="p-3.5 bg-white/20 rounded-2xl mb-3 group-hover:scale-110 transition-transform backdrop-blur-sm shadow-sm">
+                <Clipboard className="w-7 h-7" />
             </div>
-            <div className="font-semibold text-sm">Medical Reports</div>
+            <div className="font-bold text-sm tracking-wide">Medical Reports</div>
           </Link>
-          {/* Report Generation Button - Custom Styling wrapped in helper or direct */}
-          <ReportGenerator />
+          
         </div>
       </section>
     </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useHealthData } from '../context/HealthDataContext';
 import toast from 'react-hot-toast';
-import { Pencil, Check, X, LayoutDashboard, BookOpen, AlertTriangle, BarChart2, Menu } from 'lucide-react';
+import { Pencil, Check, X, LayoutDashboard, BookOpen, AlertTriangle, BarChart2, Menu, MessageCircle } from 'lucide-react';
 
 function Header() {
   const { getDisplayName, updateUserName } = useHealthData();
@@ -60,56 +60,59 @@ function Header() {
 
   return (
     <>
-      <header className="glass sticky top-0 z-40 border-b border-gray-100">
-        <div className="container mx-auto flex justify-between items-center py-4 px-4 md:px-0">
+      <header className="glass sticky top-0 z-40 border-b border-white/50">
+        <div className="container mx-auto flex justify-between items-center py-4 px-4 md:px-6 lg:px-8">
           {/* App Title/Logo */}
-          <Link to="/dashboard" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-purple-600 hover:opacity-80 transition-opacity">
+          <Link to="/dashboard" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-primary-400 hover:opacity-80 transition-opacity tracking-tight">
             The Warrior's Journal
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            <Link to="/dashboard" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/dashboard') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Dashboard</Link>
-            <Link to="/journal" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/journal') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Journal</Link>
-            <Link to="/crisis-log" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/crisis-log') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Crisis Log</Link>
-            <Link to="/analytics" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/analytics') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Analytics</Link>
-            <Link to="/motivation" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/motivation') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Motivation</Link>
-            <Link to="/settings" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/settings') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>Settings</Link>
-            <Link to="/guide" className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/guide') ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:text-primary-600 hover:bg-primary-50'}`}>How to use app</Link>
+          <nav className="hidden md:flex items-center space-x-2">
+            <Link to="/dashboard" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/dashboard') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Dashboard</Link>
+            <Link to="/journal" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/journal') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Journal</Link>
+            <Link to="/chat" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/chat') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Chat</Link>
+            <Link to="/crisis-log" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/crisis-log') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Crisis Log</Link>
+            <Link to="/analytics" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/analytics') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Analytics</Link>
+            <Link to="/motivation" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/motivation') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Motivation</Link>
+            <Link to="/settings" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/settings') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Settings</Link>
+            <Link to="/guide" className={`px-4 py-2 rounded-2xl text-sm font-semibold transition-all ${isActive('/guide') ? 'bg-primary-50 text-primary-600 shadow-sm' : 'text-slate-500 hover:text-primary-600 hover:bg-primary-50/50'}`}>Guide</Link>
           </nav>
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-t border-gray-200 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <div className="flex justify-around items-center h-[70px] pb-2">
-            <Link to="/dashboard" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/dashboard') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
-                <LayoutDashboard className={`w-6 h-6 ${isActive('/dashboard') ? 'fill-primary-100' : ''}`} />
-                <span className="text-[10px] font-medium">Home</span>
-            </Link>
-            <Link to="/journal" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/journal') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
-                <BookOpen className={`w-6 h-6 ${isActive('/journal') ? 'fill-primary-100' : ''}`} />
-                <span className="text-[10px] font-medium">Journal</span>
-            </Link>
-            <div className="relative -top-6">
-                <Link to="/crisis-log" className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-rose-500 to-rose-600 text-white shadow-lg shadow-rose-500/30 hover:shadow-rose-500/50 hover:scale-105 transition-all">
-                    <AlertTriangle className="w-6 h-6" />
-                </Link>
-                <span className="absolute -bottom-5 w-full text-center text-[10px] font-medium text-slate-500">Crisis</span>
-            </div>
-            <Link to="/analytics" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/analytics') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
-                <BarChart2 className={`w-6 h-6 ${isActive('/analytics') ? 'fill-primary-100' : ''}`} />
-                <span className="text-[10px] font-medium">Analytics</span>
-            </Link>
-            <button 
-                onClick={() => setIsMenuOpen(true)}
-                className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isMenuOpen ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}
-            >
-                <Menu className="w-6 h-6" />
-                <span className="text-[10px] font-medium">Menu</span>
-            </button>
-        </div>
-      </nav>
+      {/* Mobile Bottom Navigation (Floating Tab Bar) */}
+      <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 px-4 pointer-events-none">
+        <nav className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-3xl pb-safe pointer-events-auto">
+          <div className="flex justify-around items-center h-[70px] px-2 relative">
+              <Link to="/dashboard" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/dashboard') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
+                  <LayoutDashboard className={`w-[22px] h-[22px] ${isActive('/dashboard') ? 'fill-primary-100/50' : ''}`} />
+                  <span className="text-[10px] font-semibold">Home</span>
+              </Link>
+              <Link to="/journal" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/journal') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
+                  <BookOpen className={`w-[22px] h-[22px] ${isActive('/journal') ? 'fill-primary-100/50' : ''}`} />
+                  <span className="text-[10px] font-semibold">Journal</span>
+              </Link>
+              <div className="relative -top-6 flex items-center justify-center mx-2">
+                  <Link to="/emergency-kit" className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-primary-600 to-primary-500 text-white shadow-[0_8px_20px_rgb(177,45,83,0.3)] hover:shadow-[0_12px_25px_rgb(177,45,83,0.4)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300">
+                      <AlertTriangle className="w-[22px] h-[22px]" />
+                  </Link>
+                  <span className="absolute -bottom-5 w-full text-center text-[10px] font-semibold text-slate-500">Crisis</span>
+              </div>
+              <Link to="/chat" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive('/chat') ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}>
+                  <MessageCircle className={`w-[22px] h-[22px] ${isActive('/chat') ? 'fill-primary-100/50' : ''}`} />
+                  <span className="text-[10px] font-semibold">Chat</span>
+              </Link>
+              <button 
+                  onClick={() => setIsMenuOpen(true)}
+                  className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${isMenuOpen ? 'text-primary-600' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                  <Menu className="w-[22px] h-[22px]" />
+                  <span className="text-[10px] font-semibold">Menu</span>
+              </button>
+          </div>
+        </nav>
+      </div>
 
       {/* Mobile Sidebar Overlay */}
       {isMenuOpen && (
@@ -140,56 +143,64 @@ function Header() {
             {/* Sidebar Content */}
             <div className="flex flex-col h-full">
               {/* Navigation Links */}
-              <nav className="flex flex-col p-4 space-y-2">
+              <nav className="flex flex-col p-4 space-y-1">
                 <Link 
                   to="/dashboard" 
-                  className="flex items-center p-3 rounded-xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
                   onClick={closeMobileMenu}
                 >
                   Dashboard
                 </Link>
                 <Link 
                   to="/journal" 
-                  className="flex items-center p-3 rounded-xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
                   onClick={closeMobileMenu}
                 >
                   Journal
                 </Link>
+                 <Link 
+                  to="/chat" 
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
+                  onClick={closeMobileMenu}
+                >
+                  Chat Companion
+                </Link>
                 <Link 
                   to="/crisis-log" 
-                  className="flex items-center p-3 rounded-xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
                   onClick={closeMobileMenu}
                 >
                   Crisis Log
                 </Link>
                 <Link 
                   to="/analytics" 
-                  className="flex items-center p-3 rounded-xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
                   onClick={closeMobileMenu}
                 >
                   Analytics
                 </Link>
                 <Link 
                   to="/motivation" 
-                  className="flex items-center p-3 rounded-xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
                   onClick={closeMobileMenu}
                 >
                   Motivation
                 </Link>
                 <Link 
                   to="/guide" 
-                  className="flex items-center p-3 rounded-xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
                   onClick={closeMobileMenu}
                 >
                   How to use app
                 </Link>
                 <Link 
                   to="/settings" 
-                  className="flex items-center p-3 rounded-xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-medium"
+                  className="flex items-center px-4 py-3 rounded-2xl text-slate-600 hover:bg-primary-50 hover:text-primary-700 transition-all font-semibold"
                   onClick={closeMobileMenu}
                 >
                   Settings
                 </Link>
+               
               </nav>
               
               {/* User Greeting Section */}

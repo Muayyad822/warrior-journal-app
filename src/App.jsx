@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Header from './components/Header';
@@ -42,6 +42,13 @@ const Home = () => {
 
 const AppContent = () => {
   const { hasCompletedOnboarding } = useHealthData();
+  const location = useLocation();
+
+  useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 10);
+  }, [location.pathname]);
 
   if (!hasCompletedOnboarding) {
     return <OnboardingWelcome />;
@@ -62,9 +69,9 @@ const AppContent = () => {
           <Route path="/emergency-kit" element={<EmergencyKit />} />
           <Route path="/guide" element={<GuidePage />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/chat" element={<AIChat />} />
         </Routes>
       </main>
-      <AIChat />
       <Footer />
       <PWAInstallPrompt />
       <VercelAnalytics />

@@ -17,6 +17,7 @@ export const HealthDataProvider = ({ children }) => {
   const [crisisActionPlan, setCrisisActionPlan] = useState('');
   const [userName, setUserName] = useState('');
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [aiChatHistory, setAiChatHistory] = useState([]);
 
   // Load data from localStorage on initial mount
   useEffect(() => {
@@ -26,6 +27,7 @@ export const HealthDataProvider = ({ children }) => {
     const storedCrisisActionPlan = localStorage.getItem('crisisActionPlan');
     const storedUserName = localStorage.getItem('userName');
     const storedOnboardingStatus = localStorage.getItem('hasCompletedOnboarding');
+    const storedAiChatHistory = localStorage.getItem('aiChatHistory');
 
     // Load user data
     if (storedUserName) {
@@ -90,6 +92,15 @@ export const HealthDataProvider = ({ children }) => {
     if (storedCrisisActionPlan) {
       setCrisisActionPlan(storedCrisisActionPlan); // Stored as plain string
     }
+
+    if (storedAiChatHistory) {
+      try {
+        setAiChatHistory(JSON.parse(storedAiChatHistory));
+      } catch (error) {
+        console.error("Failed to parse AI chat history from localStorage:", error);
+        setAiChatHistory([]);
+      }
+    }
   }, []); // Empty dependency array means this runs once on mount
 
   // Save user name to localStorage whenever it changes
@@ -123,6 +134,11 @@ export const HealthDataProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('crisisActionPlan', crisisActionPlan); // Save as plain string
   }, [crisisActionPlan]);
+
+  // Save AI chat history to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('aiChatHistory', JSON.stringify(aiChatHistory));
+  }, [aiChatHistory]);
 
   // Function to add a new journal entry
   const addJournalEntry = (entry) => {
@@ -167,6 +183,15 @@ export const HealthDataProvider = ({ children }) => {
   // Function to update crisis action plan
   const updateCrisisActionPlan = (plan) => {
     setCrisisActionPlan(plan);
+  };
+
+  // Chat functions
+  const addChatMessage = (message) => {
+    setAiChatHistory((prev) => [...prev, message]);
+  };
+
+  const clearChatHistory = () => {
+    setAiChatHistory([]);
   };
 
   // Quick action: Add water
@@ -233,6 +258,9 @@ export const HealthDataProvider = ({ children }) => {
     completeOnboarding,
     getDisplayName,
     addWaterIntake,
+    aiChatHistory,
+    addChatMessage,
+    clearChatHistory,
   };
 
   return (
